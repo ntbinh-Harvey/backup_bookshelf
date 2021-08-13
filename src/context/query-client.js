@@ -1,5 +1,5 @@
-import * as React from 'react'
-import {QueryClient, QueryClientProvider as RQProvider} from 'react-query'
+import * as React from 'react';
+import { QueryClient, QueryClientProvider as RQProvider } from 'react-query';
 
 /**
  * This is a clever little "hack" to make sure we make only one instance of
@@ -11,10 +11,10 @@ import {QueryClient, QueryClientProvider as RQProvider} from 'react-query'
  * @returns a constant value returned from the initializer
  */
 function useConstant(initializer) {
-  return React.useState(initializer)[0]
+  return React.useState(initializer)[0];
 }
 
-function QueryClientProvider({children}) {
+function QueryClientProvider({ children }) {
   const queryClient = useConstant(() => {
     const client = new QueryClient({
       defaultOptions: {
@@ -22,24 +22,23 @@ function QueryClientProvider({children}) {
           useErrorBoundary: true,
           refetchOnWindowFocus: false,
           retry(failureCount, error) {
-            if (error.status === 404) return false
-            else if (failureCount < 2) return true
-            else return false
+            if (error.status === 404) return false;
+            if (failureCount < 2) return true;
+            return false;
           },
         },
         mutations: {
-          onError: (err, variables, recover) =>
-            typeof recover === 'function' ? recover() : null,
+          onError: (err, variables, recover) => (typeof recover === 'function' ? recover() : null),
         },
       },
-    })
+    });
     // let the devtools know about our new query client
     // if the devtools are installed:
-    window.__devtools?.setQueryClient?.(client)
-    return client
-  })
+    window.__devtools?.setQueryClient?.(client);
+    return client;
+  });
 
-  return <RQProvider client={queryClient}>{children}</RQProvider>
+  return <RQProvider client={queryClient}>{children}</RQProvider>;
 }
 
-export {QueryClientProvider}
+export { QueryClientProvider };

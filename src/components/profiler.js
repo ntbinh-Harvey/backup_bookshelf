@@ -1,23 +1,23 @@
-import * as React from 'react'
-import {client} from 'utils/api-client'
+import * as React from 'react';
+import { client } from 'utils/api-client';
 
-let queue = []
+let queue = [];
 
-setInterval(sendProfileQueue, 5000)
+setInterval(sendProfileQueue, 5000);
 
 function sendProfileQueue() {
   if (!queue.length) {
-    return Promise.resolve({success: true})
+    return Promise.resolve({ success: true });
   }
-  const queueToSend = [...queue]
-  queue = []
-  return client('profile', {data: queueToSend})
+  const queueToSend = [...queue];
+  queue = [];
+  return client('profile', { data: queueToSend });
 }
 
 // By wrapping the Profile like this, we can set the onRender to whatever
 // we want and we get the additional benefit of being able to include
 // additional data and filter phases
-function Profiler({metadata, phases, ...props}) {
+function Profiler({ metadata, phases, ...props }) {
   function reportProfile(
     id, // the "id" prop of the Profiler tree that has just committed
     phase, // either "mount" (if the tree just mounted) or "update" (if it re-rendered)
@@ -37,10 +37,10 @@ function Profiler({metadata, phases, ...props}) {
         startTime,
         commitTime,
         interactions,
-      })
+      });
     }
   }
-  return <React.Profiler onRender={reportProfile} {...props} />
+  return <React.Profiler onRender={reportProfile} {...props} />;
 }
 
-export {Profiler}
+export { Profiler };

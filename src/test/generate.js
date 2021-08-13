@@ -1,4 +1,4 @@
-import faker from 'faker'
+import faker from 'faker';
 
 function buildUser(overrides) {
   return {
@@ -6,7 +6,7 @@ function buildUser(overrides) {
     username: faker.internet.userName(),
     password: faker.internet.password(),
     ...overrides,
-  }
+  };
 }
 
 function buildBook(overrides) {
@@ -19,7 +19,7 @@ function buildBook(overrides) {
     publisher: faker.company.companyName(),
     synopsis: faker.lorem.paragraph(),
     ...overrides,
-  }
+  };
 }
 
 function buildListItem(overrides = {}) {
@@ -27,8 +27,8 @@ function buildListItem(overrides = {}) {
     bookId = overrides.book ? overrides.book.id : faker.datatype.uuid(),
     startDate = faker.date.past(2).getTime(),
     finishDate = faker.date.between(new Date(startDate), new Date()).getTime(),
-    owner = {ownerId: faker.datatype.uuid()},
-  } = overrides
+    owner = { ownerId: faker.datatype.uuid() },
+  } = overrides;
   return {
     id: faker.datatype.uuid(),
     bookId,
@@ -37,9 +37,9 @@ function buildListItem(overrides = {}) {
     notes: faker.datatype.boolean() ? '' : faker.lorem.paragraph(),
     finishDate,
     startDate,
-    book: buildBook({id: bookId}),
+    book: buildBook({ id: bookId }),
     ...overrides,
-  }
+  };
 }
 
-export {buildUser, buildListItem, buildBook}
+export { buildUser, buildListItem, buildBook };

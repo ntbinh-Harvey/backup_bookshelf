@@ -1,75 +1,76 @@
 /** @jsx jsx */
-import {jsx, Global} from '@emotion/core'
+import { jsx, Global } from '@emotion/core';
 
-import '@reach/tabs/styles.css'
-import '@reach/tooltip/styles.css'
+import '@reach/tabs/styles.css';
+import '@reach/tooltip/styles.css';
 
-import * as React from 'react'
-import ReactDOM from 'react-dom'
-import {FaTools} from 'react-icons/fa'
-import {Tooltip} from '@reach/tooltip'
-import {Tabs, TabList, TabPanels, TabPanel, Tab} from '@reach/tabs'
-import * as reactQuery from 'react-query'
+import * as React from 'react';
+import ReactDOM from 'react-dom';
+import { FaTools } from 'react-icons/fa';
+import { Tooltip } from '@reach/tooltip';
+import {
+  Tabs, TabList, TabPanels, TabPanel, Tab,
+} from '@reach/tabs';
+import * as reactQuery from 'react-query';
 // pulling the development thing directly because I'm not worried about
 // bundle size since this won't be loaded in prod unless the query string/localStorage key is set
-import {ReactQueryDevtoolsPanel} from 'react-query/es/devtools'
-import * as colors from 'styles/colors'
+import { ReactQueryDevtoolsPanel } from 'react-query/es/devtools';
+import * as colors from 'styles/colors';
 
 // this is a bit of hackery, because we want to keep our devtools and app
 // pretty seperate, but we need to have a way to know when the query client is
 // set so we can provide it to ReactQueryDevtoolsPanel
-let latestQueryClient = null
-let rerender = () => {}
+let latestQueryClient = null;
+let rerender = () => {};
 window.__devtools = {
   setQueryClient(client) {
-    latestQueryClient = client
+    latestQueryClient = client;
     // in a set timeout to avoid:
     // https://reactjs.org/link/setstate-in-render
-    setTimeout(rerender)
+    setTimeout(rerender);
   },
-}
+};
 function useLatestQueryClient() {
-  rerender = React.useReducer(() => ({}))[1]
-  return latestQueryClient
+  rerender = React.useReducer(() => ({}))[1];
+  return latestQueryClient;
 }
 
 function install() {
   // add some things to window to make it easier to debug
-  window.reactQuery = reactQuery
+  window.reactQuery = reactQuery;
 
   const requireDevToolsLocal = require.context(
     './',
     false,
     /dev-tools\.local\.js/,
-  )
-  const local = requireDevToolsLocal.keys()[0]
+  );
+  const local = requireDevToolsLocal.keys()[0];
   if (local) {
-    requireDevToolsLocal(local).default
+    requireDevToolsLocal(local).default;
   }
 
   function DevTools() {
-    const rootRef = React.useRef()
-    const queryClient = useLatestQueryClient()
-    const [hovering, setHovering] = React.useState(false)
+    const rootRef = React.useRef();
+    const queryClient = useLatestQueryClient();
+    const [hovering, setHovering] = React.useState(false);
     const [persist, setPersist] = useLocalStorageState(
       '__bookshelf_devtools_persist__',
       false,
-    )
+    );
     const [tabIndex, setTabIndex] = useLocalStorageState(
       '__bookshelf_devtools_tab_index__',
       0,
-    )
+    );
 
-    const show = persist || hovering
-    const toggleShow = () => setPersist(v => !v)
+    const show = persist || hovering;
+    const toggleShow = () => setPersist((v) => !v);
     React.useEffect(() => {
       function updateHoverState(event) {
-        setHovering(rootRef.current?.contains(event.target) ?? false)
+        setHovering(rootRef.current?.contains(event.target) ?? false);
       }
-      document.body.addEventListener('mousemove', updateHoverState)
-      return () =>
-        document.body.removeEventListener('mousemove', updateHoverState)
-    }, [])
+      document.body.addEventListener('mousemove', updateHoverState);
+      return () => document.body.removeEventListener('mousemove', updateHoverState);
+    }, []);
     return (
       <div
         css={{
@@ -134,10 +135,10 @@ function install() {
             },
             show
               ? {
-                  height: '50vh',
-                  width: '100%',
-                  opacity: '1',
-                }
+                height: '50vh',
+                width: '100%',
+                opacity: '1',
+              }
               : null,
           ]}
         >
@@ -178,11 +179,11 @@ function install() {
           </Tooltip>
           {show ? (
             <Tabs
-              css={{padding: 20}}
+              css={{ padding: 20 }}
               index={tabIndex}
-              onChange={i => setTabIndex(i)}
+              onChange={(i) => setTabIndex(i)}
             >
-              <TabList css={{marginBottom: 20}}>
+              <TabList css={{ marginBottom: 20 }}>
                 <Tab>Controls</Tab>
                 <Tab>Request Failures</Tab>
                 <Tab>React Query</Tab>
@@ -193,7 +194,7 @@ function install() {
                   margin: '0px -20px 20px -20px',
                 }}
               />
-              <TabPanels css={{height: '100%'}}>
+              <TabPanels css={{ height: '100%' }}>
                 <TabPanel>
                   <ControlsPanel />
                 </TabPanel>
@@ -223,12 +224,12 @@ function install() {
           />
         ) : null}
       </div>
-    )
+    );
   }
   // add dev tools UI to the page
-  const devToolsRoot = document.createElement('div')
-  document.body.appendChild(devToolsRoot)
-  ReactDOM.render(<DevTools />, devToolsRoot)
+  const devToolsRoot = document.createElement('div');
+  document.body.appendChild(devToolsRoot);
+  ReactDOM.render(<DevTools />, devToolsRoot);
 }
 
 function ControlsPanel() {
@@ -248,24 +249,24 @@ function ControlsPanel() {
       <RequestVarTime />
       <ClearLocalStorage />
     </div>
-  )
+  );
 }
 
 function ClearLocalStorage() {
   function clear() {
-    window.localStorage.clear()
-    window.location.assign(window.location)
+    window.localStorage.clear();
+    window.location.assign(window.location);
   }
-  return <button onClick={clear}>Purge Database</button>
+  return <button onClick={clear}>Purge Database</button>;
 }
 
 function FailureRate() {
   const [failureRate, setFailureRate] = useLocalStorageState(
     '__bookshelf_failure_rate__',
     0,
-  )
+  );
 
-  const handleChange = event => setFailureRate(Number(event.target.value) / 100)
+  const handleChange = (event) => setFailureRate(Number(event.target.value) / 100);
 
   return (
     <div
@@ -278,7 +279,7 @@ function FailureRate() {
     >
       <label htmlFor="failureRate">Request Failure Percentage: </label>
       <input
-        css={{marginLeft: 6}}
+        css={{ marginLeft: 6 }}
         value={failureRate * 100}
         type="number"
         min="0"
@@ -288,16 +289,16 @@ function FailureRate() {
         id="failureRate"
       />
     </div>
-  )
+  );
 }
 
 function EnableDevTools() {
   const [enableDevTools, setEnableDevTools] = useLocalStorageState(
     'dev-tools',
     process.env.NODE_ENV === 'development',
-  )
+  );
 
-  const handleChange = event => setEnableDevTools(event.target.checked)
+  const handleChange = (event) => setEnableDevTools(event.target.checked);
 
   return (
     <div
@@ -308,7 +309,7 @@ function EnableDevTools() {
       }}
     >
       <input
-        css={{marginRight: 6}}
+        css={{ marginRight: 6 }}
         checked={enableDevTools}
         type="checkbox"
         onChange={handleChange}
@@ -316,16 +317,16 @@ function EnableDevTools() {
       />
       <label htmlFor="enableDevTools">Enable DevTools by default</label>
     </div>
-  )
+  );
 }
 
 function RequestMinTime() {
   const [minTime, setMinTime] = useLocalStorageState(
     '__bookshelf_min_request_time__',
     400,
-  )
+  );
 
-  const handleChange = event => setMinTime(Number(event.target.value))
+  const handleChange = (event) => setMinTime(Number(event.target.value));
 
   return (
     <div
@@ -338,7 +339,7 @@ function RequestMinTime() {
     >
       <label htmlFor="minTime">Request min time (ms): </label>
       <input
-        css={{marginLeft: 6}}
+        css={{ marginLeft: 6 }}
         value={minTime}
         type="number"
         step="100"
@@ -348,16 +349,16 @@ function RequestMinTime() {
         id="minTime"
       />
     </div>
-  )
+  );
 }
 
 function RequestVarTime() {
   const [varTime, setVarTime] = useLocalStorageState(
     '__bookshelf_variable_request_time__',
     400,
-  )
+  );
 
-  const handleChange = event => setVarTime(Number(event.target.value))
+  const handleChange = (event) => setVarTime(Number(event.target.value));
 
   return (
     <div
@@ -370,7 +371,7 @@ function RequestVarTime() {
     >
       <label htmlFor="varTime">Request variable time (ms): </label>
       <input
-        css={{marginLeft: 6}}
+        css={{ marginLeft: 6 }}
         value={varTime}
         type="number"
         step="100"
@@ -380,28 +381,28 @@ function RequestVarTime() {
         id="varTime"
       />
     </div>
-  )
+  );
 }
 
 function RequestFailUI() {
   const [failConfig, setFailConfig] = useLocalStorageState(
     '__bookshelf_request_fail_config__',
     [],
-  )
+  );
 
   function handleRemoveClick(index) {
-    setFailConfig(c => [...c.slice(0, index), ...c.slice(index + 1)])
+    setFailConfig((c) => [...c.slice(0, index), ...c.slice(index + 1)]);
   }
 
   function handleSubmit(event) {
-    event.preventDefault()
-    const {requestMethod, urlMatch} = event.target.elements
-    setFailConfig(c => [
+    event.preventDefault();
+    const { requestMethod, urlMatch } = event.target.elements;
+    setFailConfig((c) => [
       ...c,
-      {requestMethod: requestMethod.value, urlMatch: urlMatch.value},
-    ])
-    requestMethod.value = ''
-    urlMatch.value = ''
+      { requestMethod: requestMethod.value, urlMatch: urlMatch.value },
+    ]);
+    requestMethod.value = '';
+    urlMatch.value = '';
   }
 
   return (
@@ -440,20 +441,20 @@ function RequestFailUI() {
             <option value="DELETE">DELETE</option>
           </select>
         </div>
-        <div css={{width: '100%'}}>
-          <label css={{display: 'block'}} htmlFor="urlMatch">
+        <div css={{ width: '100%' }}>
+          <label css={{ display: 'block' }} htmlFor="urlMatch">
             URL Match:
           </label>
           <input
             autoComplete="off"
-            css={{width: '100%', marginTop: 4}}
+            css={{ width: '100%', marginTop: 4 }}
             id="urlMatch"
             required
             placeholder="/api/list-items/:listItemId"
           />
         </div>
         <div>
-          <button css={{padding: '6px 16px'}} type="submit">
+          <button css={{ padding: '6px 16px' }} type="submit">
             + Add
           </button>
         </div>
@@ -467,7 +468,7 @@ function RequestFailUI() {
           paddingBottom: '2rem',
         }}
       >
-        {failConfig.map(({requestMethod, urlMatch}, index) => (
+        {failConfig.map(({ requestMethod, urlMatch }, index) => (
           <li
             key={index}
             css={{
@@ -481,14 +482,17 @@ function RequestFailUI() {
               background: 'rgb(20,36,55)',
             }}
           >
-            <div css={{display: 'flex', flexWrap: 'wrap'}}>
-              <strong css={{minWidth: 70}}>{requestMethod}:</strong>
-              <span css={{marginLeft: 10, whiteSpace: 'pre'}}>{urlMatch}</span>
+            <div css={{ display: 'flex', flexWrap: 'wrap' }}>
+              <strong css={{ minWidth: 70 }}>
+                {requestMethod}
+                :
+              </strong>
+              <span css={{ marginLeft: 10, whiteSpace: 'pre' }}>{urlMatch}</span>
             </div>
             <button
               css={{
                 opacity: 0.6,
-                ':hover': {opacity: 1},
+                ':hover': { opacity: 1 },
                 fontSize: 13,
                 background: 'rgb(11, 20, 33) !important',
               }}
@@ -500,7 +504,7 @@ function RequestFailUI() {
         ))}
       </ul>
     </div>
-  )
+  );
 }
 
 /**
@@ -512,36 +516,36 @@ function RequestFailUI() {
 function useLocalStorageState(
   key,
   defaultValue = '',
-  {serialize = JSON.stringify, deserialize = JSON.parse} = {},
+  { serialize = JSON.stringify, deserialize = JSON.parse } = {},
 ) {
   const [state, setState] = React.useState(() => {
-    const valueInLocalStorage = window.localStorage.getItem(key)
+    const valueInLocalStorage = window.localStorage.getItem(key);
     if (valueInLocalStorage) {
-      return deserialize(valueInLocalStorage)
+      return deserialize(valueInLocalStorage);
     }
-    return typeof defaultValue === 'function' ? defaultValue() : defaultValue
-  })
+    return typeof defaultValue === 'function' ? defaultValue() : defaultValue;
+  });
 
-  React.useDebugValue(`${key}: ${serialize(state)}`)
+  React.useDebugValue(`${key}: ${serialize(state)}`);
 
-  const prevKeyRef = React.useRef(key)
+  const prevKeyRef = React.useRef(key);
 
   React.useEffect(() => {
-    const prevKey = prevKeyRef.current
+    const prevKey = prevKeyRef.current;
     if (prevKey !== key) {
-      window.localStorage.removeItem(prevKey)
+      window.localStorage.removeItem(prevKey);
     }
-    prevKeyRef.current = key
-  }, [key])
+    prevKeyRef.current = key;
+  }, [key]);
 
   React.useEffect(() => {
-    window.localStorage.setItem(key, serialize(state))
-  }, [key, state, serialize])
+    window.localStorage.setItem(key, serialize(state));
+  }, [key, state, serialize]);
 
-  return [state, setState]
+  return [state, setState];
 }
 
-export {install}
+export { install };
 
 /*
 eslint

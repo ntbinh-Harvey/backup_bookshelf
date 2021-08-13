@@ -1,12 +1,11 @@
-const {spawnSync} = require('./utils')
+const { spawnSync } = require('./utils');
 
-const branch =
-  process.env.BRANCH || spawnSync('git rev-parse --abbrev-ref HEAD')
+const branch = process.env.BRANCH || spawnSync('git rev-parse --abbrev-ref HEAD');
 
-console.log(`Building for branch "${branch}"`)
+console.log(`Building for branch "${branch}"`);
 
 if (branch.startsWith('exercises/')) {
-  spawnSync('node ./scripts/build-variants', {stdio: 'inherit'})
+  spawnSync('node ./scripts/build-variants', { stdio: 'inherit' });
 } else {
-  spawnSync('npx react-scripts build --profile', {stdio: 'inherit'})
+  spawnSync('npx react-scripts build --profile', { stdio: 'inherit' });
 }

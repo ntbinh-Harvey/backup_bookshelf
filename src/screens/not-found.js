@@ -1,7 +1,7 @@
 /** @jsx jsx */
-import {jsx} from '@emotion/core'
+import { jsx } from '@emotion/core';
 
-import {Link} from 'components/lib'
+import { Link } from 'components/lib';
 
 function NotFoundScreen() {
   return (
@@ -14,10 +14,12 @@ function NotFoundScreen() {
       }}
     >
       <div>
-        Sorry... nothing here. <Link to="/list">Go home</Link>
+        Sorry... nothing here.
+        {' '}
+        <Link to="/list">Go home</Link>
       </div>
     </div>
-  )
+  );
 }
 
-export {NotFoundScreen}
+export { NotFoundScreen };

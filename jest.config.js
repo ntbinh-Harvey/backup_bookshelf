@@ -1,12 +1,12 @@
-const fs = require('fs')
-const path = require('path')
-const resolve = require('resolve')
+const fs = require('fs');
+const path = require('path');
+const resolve = require('resolve');
 
-process.env.BABEL_ENV = 'test'
-process.env.NODE_ENV = 'test'
-process.env.PUBLIC_URL = ''
+process.env.BABEL_ENV = 'test';
+process.env.NODE_ENV = 'test';
+process.env.PUBLIC_URL = '';
 
-require('react-scripts/config/env')
+require('react-scripts/config/env');
 
 module.exports = {
   roots: ['<rootDir>/src'],
@@ -55,4 +55,4 @@ module.exports = {
     'jest-watch-typeahead/filename',
     'jest-watch-typeahead/testname',
   ],
-}
+};

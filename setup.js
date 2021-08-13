@@ -1,2 +1,1 @@
-require('./scripts/setup')
-
+require('./scripts/setup');
