@@ -24,6 +24,7 @@ async function client(
       await auth.logout();
       // refresh the page for them
       window.location.assign(window.location);
+      // eslint-disable-next-line prefer-promise-reject-errors
       return Promise.reject({ message: 'Please re-authenticate.' });
     }
     const data = await response.json();

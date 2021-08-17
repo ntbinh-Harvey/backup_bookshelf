@@ -1,9 +1,8 @@
 /** @jsx jsx */
-import { jsx } from '@emotion/core';
+import { jsx, keyframes } from '@emotion/core';
 
 import { Link as RouterLink } from 'react-router-dom';
 import styled from '@emotion/styled/macro';
-import { keyframes } from '@emotion/core';
 import * as colors from 'styles/colors';
 import * as mq from 'styles/media-queries';
 import { Dialog as ReachDialog } from '@reach/dialog';

@@ -78,6 +78,7 @@ function AuthenticatedApp() {
 }
 
 function NavLink(props) {
+  // eslint-disable-next-line react/destructuring-assignment
   const match = useMatch(props.to);
   return (
     <RouterLink
@@ -112,7 +113,7 @@ function NavLink(props) {
   );
 }
 
-function Nav(params) {
+function Nav() {
   return (
     <nav
       css={{

@@ -145,9 +145,7 @@ const handlers = [
     return res(ctx.json({ success: true }));
   }),
 
-  rest.post(`${apiUrl}/profile`, async (req, res, ctx) =>
-    // here's where we'd actually send the report to some real data store.
-    res(ctx.json({ success: true }))),
+  rest.post(`${apiUrl}/profile`, async (req, res, ctx) => res(ctx.json({ success: true }))),
 ].map((handler) => {
   const originalResolver = handler.resolver;
   handler.resolver = async function resolver(req, res, ctx) {
