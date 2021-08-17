@@ -31,6 +31,7 @@ window.__devtools = {
   },
 };
 function useLatestQueryClient() {
+  // eslint-disable-next-line prefer-destructuring
   rerender = React.useReducer(() => ({}))[1];
   return latestQueryClient;
 }
@@ -470,6 +471,7 @@ function RequestFailUI() {
       >
         {failConfig.map(({ requestMethod, urlMatch }, index) => (
           <li
+            // eslint-disable-next-line react/no-array-index-key
             key={index}
             css={{
               padding: '6px 10px',

@@ -39,6 +39,7 @@ function Rating({ listItem }) {
     const ratingId = `rating-${listItem.id}-${i}`;
     const ratingValue = i + 1;
     return (
+      // eslint-disable-next-line react/no-array-index-key
       <React.Fragment key={i}>
         <input
           name={rootClassName}
