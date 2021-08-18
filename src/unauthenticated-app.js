@@ -2,28 +2,26 @@
 import { jsx } from '@emotion/core';
 
 import * as React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectUser, login, register } from 'reducers/userSlice';
 import {
   Input, Button, Spinner, FormGroup, ErrorMessage,
 } from './components/lib';
 import { Modal, ModalContents, ModalOpenButton } from './components/modal';
 import { Logo } from './components/logo';
-import { useAuth } from './context/auth-context';
-import { useAsync } from './utils/hooks';
 
 function LoginForm({ onSubmit, submitButton }) {
-  const {
-    isLoading, isError, error, run,
-  } = useAsync();
+  const { status, error } = useSelector(selectUser);
+  const isLoading = status === 'pending';
+  const isError = status === 'rejected';
   function handleSubmit(event) {
     event.preventDefault();
     const { username, password } = event.target.elements;
 
-    run(
-      onSubmit({
-        username: username.value,
-        password: password.value,
-      }),
-    );
+    onSubmit({
+      username: username.value,
+      password: password.value,
+    });
   }
 
   return (
@@ -64,7 +62,9 @@ function LoginForm({ onSubmit, submitButton }) {
 }
 
 function UnauthenticatedApp() {
-  const { login, register } = useAuth();
+  const dispatch = useDispatch();
+  const handleLogin = (form) => dispatch(login(form));
+  const handleRegister = (form) => dispatch(register(form));
   return (
     <div
       css={{
@@ -91,7 +91,7 @@ function UnauthenticatedApp() {
           </ModalOpenButton>
           <ModalContents aria-label="Login form" title="Login">
             <LoginForm
-              onSubmit={login}
+              onSubmit={handleLogin}
               submitButton={<Button variant="primary">Login</Button>}
             />
           </ModalContents>
@@ -102,7 +102,7 @@ function UnauthenticatedApp() {
           </ModalOpenButton>
           <ModalContents aria-label="Registration form" title="Register">
             <LoginForm
-              onSubmit={register}
+              onSubmit={handleRegister}
               submitButton={<Button variant="secondary">Register</Button>}
             />
           </ModalContents>

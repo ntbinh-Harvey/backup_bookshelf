@@ -5,10 +5,11 @@ import {
   Routes, Route, Link as RouterLink, useMatch,
 } from 'react-router-dom';
 import { ErrorBoundary } from 'react-error-boundary';
+import { useSelector, useDispatch } from 'react-redux';
+import { selectUser, logout } from 'reducers/userSlice';
 import { Button, ErrorMessage, FullPageErrorFallback } from './components/lib';
 import * as mq from './styles/media-queries';
 import * as colors from './styles/colors';
-import { useAuth } from './context/auth-context';
 import { ReadingListScreen } from './screens/reading-list';
 import { FinishedScreen } from './screens/finished';
 import { DiscoverBooksScreen } from './screens/discover';
@@ -31,7 +32,9 @@ function ErrorFallback({ error }) {
 }
 
 function AuthenticatedApp() {
-  const { user, logout } = useAuth();
+  const { user } = useSelector(selectUser);
+  const dispatch = useDispatch();
+  const handleLogout = () => dispatch(logout());
   return (
     <ErrorBoundary FallbackComponent={FullPageErrorFallback}>
       <div
@@ -44,7 +47,7 @@ function AuthenticatedApp() {
         }}
       >
         {user.username}
-        <Button variant="secondary" css={{ marginLeft: '10px' }} onClick={logout}>
+        <Button variant="secondary" css={{ marginLeft: '10px' }} onClick={handleLogout}>
           Logout
         </Button>
       </div>

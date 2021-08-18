@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useQuery, useQueryClient } from 'react-query';
-import { useClient } from 'context/auth-context';
+import { useClient } from 'utils/hooks';
 import bookPlaceholderSvg from 'assets/book-placeholder.svg';
 
 const loadingBook = {
