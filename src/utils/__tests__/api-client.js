@@ -19,24 +19,6 @@ test('calls fetch at the endpoint with the arguments for GET requests', async ()
   expect(result).toEqual(mockResult);
 });
 
-test('adds auth token when a token is provided', async () => {
-  const token = 'FAKE_TOKEN';
-
-  let request;
-  const endpoint = 'test-endpoint';
-  const mockResult = { mockValue: 'VALUE' };
-  server.use(
-    rest.get(`${apiURL}/${endpoint}`, async (req, res, ctx) => {
-      request = req;
-      return res(ctx.json(mockResult));
-    }),
-  );
-
-  await client(endpoint, { token });
-
-  expect(request.headers.get('Authorization')).toBe(`Bearer ${token}`);
-});
-
 test('allows for config overrides', async () => {
   let request;
   const endpoint = 'test-endpoint';

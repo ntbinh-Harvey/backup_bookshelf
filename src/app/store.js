@@ -1,6 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import userSlice from 'reducers/userSlice';
 import bookSlice from 'reducers/bookSlice';
+import listItemSlice from 'reducers/listItemSlice';
 // middleware that log all actions
 const logAllActionsMiddleware = (storeAPI) => (next) => (action) => {
   console.group(action.type);
@@ -16,6 +17,7 @@ const store = configureStore({
   reducer: {
     user: userSlice,
     book: bookSlice,
+    listItem: listItemSlice,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logAllActionsMiddleware),
 });

@@ -16,13 +16,15 @@ const register = createAsyncThunk('user/register', async (form) => {
   const user = await auth.register(form);
   return user;
 });
+
 export const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    prefetch: (state, action) => {
-      state.status = 'resolved';
-      state.user = action.payload;
+    prefetchUser: (state, action) => {
+      state.status = action.payload.status;
+      state.user = action.payload.user;
+      state.error = action.payload.error;
     },
     logout: (state) => {
       auth.logout();
@@ -46,17 +48,17 @@ export const userSlice = createSlice({
         state.user = action.payload;
       })
       .addCase(login.rejected, (state, action) => {
-        state.status = 'rejected';
+        state.status = 'rejectedUnauthenticated';
         state.error = action.error;
       })
       .addCase(register.rejected, (state, action) => {
-        state.status = 'rejected';
+        state.status = 'rejectedUnauthenticated';
         state.error = action.error;
       });
   },
 });
 
-export const { prefetch, logout } = userSlice.actions;
+export const { prefetchUser, logout } = userSlice.actions;
 
 export { login, register };
 

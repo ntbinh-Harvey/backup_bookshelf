@@ -13,7 +13,7 @@ import { Logo } from './components/logo';
 function LoginForm({ onSubmit, submitButton }) {
   const { status, error } = useSelector(selectUser);
   const isLoading = status === 'pending';
-  const isError = status === 'rejected';
+  const isError = status === 'rejectedUnauthenticated';
   function handleSubmit(event) {
     event.preventDefault();
     const { username, password } = event.target.elements;

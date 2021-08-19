@@ -3,12 +3,16 @@ import { jsx } from '@emotion/core';
 
 import * as React from 'react';
 import debounceFn from 'debounce-fn';
+import { useDispatch, useSelector } from 'react-redux';
+import { getBook, selectABook } from 'reducers/bookSlice';
+import {
+  updateListItem, selectStatusListItem, selectErrorListItem,
+} from 'reducers/listItemSlice';
 import { FaRegCalendarAlt } from 'react-icons/fa';
 import Tooltip from '@reach/tooltip';
 import { useParams } from 'react-router-dom';
-import { useBook } from 'utils/books';
 import { formatDate } from 'utils/misc';
-import { useListItem, useUpdateListItem } from 'utils/list-items';
+import { useListItem } from 'utils/hooks';
 import * as mq from 'styles/media-queries';
 import * as colors from 'styles/colors';
 import { Spinner, Textarea, ErrorMessage } from 'components/lib';
@@ -18,9 +22,12 @@ import { StatusButtons } from 'components/status-buttons';
 
 function BookScreen() {
   const { bookId } = useParams();
-  const book = useBook(bookId);
   const listItem = useListItem(bookId);
-
+  const dispatch = useDispatch();
+  const book = useSelector(selectABook);
+  React.useEffect(() => {
+    dispatch(getBook(bookId));
+  }, [bookId, dispatch]);
   const {
     title, author, coverImageUrl, publisher, synopsis,
   } = book;
@@ -106,9 +113,12 @@ function ListItemTimeframe({ listItem }) {
 }
 
 function NotesTextarea({ listItem }) {
-  const {
-    mutate, error, isError, isLoading,
-  } = useUpdateListItem();
+  const status = useSelector(selectStatusListItem);
+  const error = useSelector(selectErrorListItem);
+  const isError = status === 'rejected';
+  const isLoading = status === 'pending';
+  const dispatch = useDispatch();
+  const mutate = React.useCallback((updates) => dispatch(updateListItem(updates)), [dispatch]);
 
   const debouncedMutate = React.useMemo(() => debounceFn(mutate, { wait: 300 }), [
     mutate,

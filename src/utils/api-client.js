@@ -5,9 +5,10 @@ const apiURL = process.env.REACT_APP_API_URL;
 async function client(
   endpoint,
   {
-    data, token, headers: customHeaders, ...customConfig
+    data, headers: customHeaders, ...customConfig
   } = {},
 ) {
+  const token = await auth.getToken();
   const config = {
     method: data ? 'POST' : 'GET',
     body: data ? JSON.stringify(data) : undefined,

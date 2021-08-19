@@ -5,27 +5,36 @@ import { Profiler } from 'components/profiler';
 import * as auth from 'auth-provider';
 import { client } from 'utils/api-client';
 import store from 'app/store';
-import { prefetch } from 'reducers/userSlice';
+import { prefetchUser } from 'reducers/userSlice';
+import { prefetchListItem } from 'reducers/listItemSlice';
 import { App } from './app';
 import { loadDevTools } from './dev-tools/load';
 import { AppProviders } from './context';
 
-async function bootstrapAppData() {
-  let user = null;
-
-  const token = await auth.getToken();
-  if (token) {
-    const data = await client('bootstrap', { token });
-    // queryClient.setQueryData('list-items', data.listItems, {
-    //   staleTime: 5000,
-    // });
-    // for (const listItem of data.listItems) {
-    //   setQueryDataForBook(queryClient, listItem.book);
-    // }
-    user = data.user;
+async function getPrefetchUser() {
+  const userState = {
+    status: 'pending', user: null, error: null,
+  };
+  const listItemState = {
+    status: 'pending',
+    listItems: [],
+  };
+  try {
+    const token = await auth.getToken();
+    if (token) {
+      const { user, listItems } = await client('bootstrap', { token });
+      userState.user = user;
+      listItemState.listItems = listItems;
+    }
+    userState.status = 'resolved';
+    listItemState.status = 'resolved';
+    store.dispatch(prefetchUser(userState));
+    store.dispatch(prefetchListItem(listItemState));
+  } catch (error) {
+    userState.status = 'rejectedApp';
+    userState.error = error;
+    store.dispatch(prefetchUser(userState));
   }
-  store.dispatch(prefetch(user));
-  return user;
 }
 
 loadDevTools(() => {
@@ -36,8 +45,7 @@ loadDevTools(() => {
       </AppProviders>
     </Profiler>,
     document.getElementById('root'),
-    () => {
-      bootstrapAppData();
-    },
+    getPrefetchUser
+    ,
   );
 });

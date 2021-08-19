@@ -1,12 +1,14 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
 
+import React from 'react';
 import {
   Routes, Route, Link as RouterLink, useMatch,
 } from 'react-router-dom';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectUser, logout } from 'reducers/userSlice';
+import { getBookListByQuery } from 'reducers/bookSlice';
 import { Button, ErrorMessage, FullPageErrorFallback } from './components/lib';
 import * as mq from './styles/media-queries';
 import * as colors from './styles/colors';
@@ -35,6 +37,8 @@ function AuthenticatedApp() {
   const { user } = useSelector(selectUser);
   const dispatch = useDispatch();
   const handleLogout = () => dispatch(logout());
+  React.useEffect(() => dispatch(getBookListByQuery('')), [dispatch]);
+
   return (
     <ErrorBoundary FallbackComponent={FullPageErrorFallback}>
       <div

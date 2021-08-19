@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { selectUser } from 'reducers/userSlice';
+import { selectListItemState } from 'reducers/listItemSlice';
 import { client } from 'utils/api-client';
 
 function useSafeDispatch(dispatch) {
@@ -93,4 +94,8 @@ function useClient() {
   );
 }
 
-export { useAsync, useClient };
+function useListItem(bookId) {
+  const { listItems } = useSelector(selectListItemState);
+  return listItems?.find((li) => li.bookId === bookId) ?? null;
+}
+export { useAsync, useClient, useListItem };
