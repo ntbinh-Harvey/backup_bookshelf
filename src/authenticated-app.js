@@ -9,6 +9,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectUser, logout } from 'reducers/userSlice';
 import { getBookListByQuery } from 'reducers/bookSlice';
+import { getListItem } from 'reducers/listItemSlice';
 import { Button, ErrorMessage, FullPageErrorFallback } from './components/lib';
 import * as mq from './styles/media-queries';
 import * as colors from './styles/colors';
@@ -36,8 +37,13 @@ function ErrorFallback({ error }) {
 function AuthenticatedApp() {
   const { user } = useSelector(selectUser);
   const dispatch = useDispatch();
-  const handleLogout = () => dispatch(logout());
-  React.useEffect(() => dispatch(getBookListByQuery('')), [dispatch]);
+  const handleLogout = () => {
+    dispatch(logout());
+  };
+  React.useEffect(() => {
+    dispatch(getBookListByQuery(''));
+    dispatch(getListItem());
+  }, [dispatch]);
 
   return (
     <ErrorBoundary FallbackComponent={FullPageErrorFallback}>

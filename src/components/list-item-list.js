@@ -8,7 +8,6 @@ import { BookRow } from './book-row';
 import { Profiler } from './profiler';
 
 function ListItemList({ filterListItems, noListItems, noFilteredListItems }) {
-  // const listItems = useListItems();
   const { listItems } = useSelector(selectListItemState);
 
   const filteredListItems = listItems.filter(filterListItems);

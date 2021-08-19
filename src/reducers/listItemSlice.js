@@ -16,7 +16,9 @@ const initialState = {
 };
 
 const getListItem = createAsyncThunk('listItems/getListItem', async () => {
-  const { listItems } = client('list-items');
+  const { listItems } = await client('list-items');
+  console.log('listItems', listItems);
+
   return listItems;
 });
 
