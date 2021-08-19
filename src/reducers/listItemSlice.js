@@ -1,6 +1,8 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { client } from 'utils/api-client';
 
+let oldListItem;
+
 const initialState = {
   status: 'idle',
   listItems: [],
@@ -47,8 +49,20 @@ export const listItemSlice = createSlice({
       .addCase(addListItem.pending, (state) => {
         state.status = 'pending';
       })
-      .addCase(updateListItem.pending, (state) => {
-        state.status = 'pending';
+      .addCase(updateListItem.pending, (state, action) => {
+        if (action.meta.arg.rating) {
+          const { rating } = action.meta.arg;
+          state.listItems = state.listItems.map((listItem) => {
+            if (listItem.id === action.meta.arg.id) {
+              oldListItem = listItem;
+              return { ...listItem, rating };
+            }
+            return listItem;
+          });
+        }
+        if (action.meta.arg.notes) {
+          state.status = 'pending';
+        }
       })
       .addCase(removeListItem.pending, (state) => {
         state.status = 'pending';
@@ -79,6 +93,9 @@ export const listItemSlice = createSlice({
         state.error = action.error;
       })
       .addCase(updateListItem.rejected, (state, action) => {
+        // if (action.meta.arg.rating) {
+        //   state.listItems = state.listItems.map((listItem) => (listItem.id === action.meta.arg.id ? oldListItem : listItem));
+        // }
         state.status = 'rejected';
         state.error = action.error;
       })
