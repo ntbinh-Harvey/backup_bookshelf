@@ -3,6 +3,12 @@ import { client } from 'utils/api-client';
 
 let oldListItem;
 
+const status = {
+  pending: 'pending',
+  resolved: 'resolved',
+  rejected: 'rejected',
+};
+
 const initialState = {
   status: 'idle',
   listItems: [],
@@ -44,10 +50,10 @@ export const listItemSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(getListItem.pending, (state) => {
-        state.status = 'pending';
+        state.status = status.pending;
       })
       .addCase(addListItem.pending, (state) => {
-        state.status = 'pending';
+        state.status = status.pending;
       })
       .addCase(updateListItem.pending, (state, action) => {
         if (action.meta.arg.rating) {
@@ -61,46 +67,51 @@ export const listItemSlice = createSlice({
           });
         }
         if (action.meta.arg.notes) {
-          state.status = 'pending';
+          state.status = status.pending;
         }
       })
       .addCase(removeListItem.pending, (state) => {
-        state.status = 'pending';
+        state.status = status.pending;
       })
       .addCase(getListItem.fulfilled, (state, action) => {
-        state.status = 'resolved';
+        state.status = status.resolved;
         state.listItems = action.payload;
       })
       .addCase(addListItem.fulfilled, (state, action) => {
-        state.status = 'resolved';
+        state.status = status.resolved;
         state.listItems.unshift(action.payload);
       })
       .addCase(updateListItem.fulfilled, (state, action) => {
-        state.status = 'resolved';
+        state.status = status.resolved;
         state.listItems = state.listItems.map((listItem) => (listItem.id === action.payload.id ? action.payload : listItem));
       })
       .addCase(removeListItem.fulfilled, (state, action) => {
-        state.status = 'resolved';
+        state.status = status.resolved;
         const index = state.listItems.map((listItem) => listItem.id).indexOf(action.payload);
         state.listItems.splice(index, 1);
       })
       .addCase(getListItem.rejected, (state, action) => {
-        state.status = 'rejected';
+        state.status = status.rejected;
         state.error = action.error;
       })
       .addCase(addListItem.rejected, (state, action) => {
-        state.status = 'rejected';
+        state.status = status.rejected;
         state.error = action.error;
       })
       .addCase(updateListItem.rejected, (state, action) => {
-        // if (action.meta.arg.rating) {
-        //   state.listItems = state.listItems.map((listItem) => (listItem.id === action.meta.arg.id ? oldListItem : listItem));
-        // }
-        state.status = 'rejected';
+        if (action.meta.arg.rating) {
+          state.listItems = state.listItems.map((listItem) => {
+            if (listItem.id === action.meta.arg.id) {
+              return { ...listItem, ...oldListItem };
+            }
+            return listItem;
+          });
+        }
+        state.status = status.rejected;
         state.error = action.error;
       })
       .addCase(removeListItem.rejected, (state, action) => {
-        state.status = 'rejected';
+        state.status = status.rejected;
         state.error = action.error;
       });
   },

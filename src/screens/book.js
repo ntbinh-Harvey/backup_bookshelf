@@ -4,7 +4,7 @@ import { jsx } from '@emotion/core';
 import * as React from 'react';
 import debounceFn from 'debounce-fn';
 import { useDispatch, useSelector } from 'react-redux';
-import { getBook, selectABook } from 'reducers/bookSlice';
+import { getBook, selectABook, selectError } from 'reducers/bookSlice';
 import {
   updateListItem, selectStatusListItem, selectErrorListItem,
 } from 'reducers/listItemSlice';
@@ -25,6 +25,8 @@ function BookScreen() {
   const listItem = useListItem(bookId);
   const dispatch = useDispatch();
   const book = useSelector(selectABook);
+  const error = useSelector(selectError);
+  if (error) throw error;
   React.useEffect(() => {
     dispatch(getBook(bookId));
   }, [bookId, dispatch]);
@@ -118,10 +120,10 @@ function NotesTextarea({ listItem }) {
   const isError = status === 'rejected';
   const isLoading = status === 'pending';
   const dispatch = useDispatch();
-  const mutate = React.useCallback((updates) => dispatch(updateListItem(updates)), [dispatch]);
+  const handleSendNote = React.useCallback((updates) => dispatch(updateListItem(updates)), [dispatch]);
 
-  const debouncedMutate = React.useMemo(() => debounceFn(mutate, { wait: 300 }), [
-    mutate,
+  const debouncedMutate = React.useMemo(() => debounceFn(handleSendNote, { wait: 300 }), [
+    handleSendNote,
   ]);
 
   function handleNotesChange(e) {

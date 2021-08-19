@@ -2,9 +2,15 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { client } from 'utils/api-client';
 import bookPlaceholderSvg from 'assets/book-placeholder.svg';
 
+const status = {
+  pending: 'pending',
+  resolved: 'resolved',
+  rejected: 'rejected',
+};
+
 const loadingBook = {
   title: 'Loading...',
-  author: 'loading...',
+  author: 'Loading...',
   coverImageUrl: bookPlaceholderSvg,
   publisher: 'Loading Publishing',
   synopsis: 'Loading...',
@@ -41,26 +47,26 @@ export const bookSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(getBookListByQuery.pending, (state) => {
-        state.status = 'pending';
+        state.status = status.pending;
       })
       .addCase(getBook.pending, (state) => {
-        state.status = 'pending';
+        state.status = status.pending;
         state.book = loadingBook;
       })
       .addCase(getBookListByQuery.fulfilled, (state, action) => {
-        state.status = 'resolved';
+        state.status = status.resolved;
         state.books = action.payload;
       })
       .addCase(getBook.fulfilled, (state, action) => {
-        state.status = 'resolved';
+        state.status = status.resolved;
         state.book = action.payload;
       })
       .addCase(getBookListByQuery.rejected, (state, action) => {
-        state.status = 'rejected';
+        state.status = status.rejected;
         state.error = action.error;
       })
       .addCase(getBook.rejected, (state, action) => {
-        state.status = 'rejected';
+        state.status = status.rejected;
         state.error = action.error;
       });
   },

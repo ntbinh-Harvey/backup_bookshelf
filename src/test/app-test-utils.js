@@ -17,15 +17,28 @@ async function loginAsUser(userProperties) {
   return authUser;
 }
 
-const waitForLoading = () => waitForElementToBeRemoved(
+const waitForLoading = async () => waitForElementToBeRemoved(
   () => [
     ...screen.queryAllByLabelText(/loading/i),
     ...screen.queryAllByText(/loading/i),
   ],
-  { timeout: 4000 },
+  { timeout: 10000 },
 );
 
 async function render(ui, { route = '/list', user, ...renderOptions } = {}) {
+  user = typeof user === 'undefined' ? await loginAsUser() : user;
+  window.history.pushState({}, 'Test page', route);
+  const returnValue = {
+    ...rtlRender(ui, {
+      wrapper: AppProviders,
+      ...renderOptions,
+    }),
+    user,
+  };
+  return returnValue;
+}
+
+async function renderWaitLoading(ui, { route = '/list', user, ...renderOptions } = {}) {
   user = typeof user === 'undefined' ? await loginAsUser() : user;
   window.history.pushState({}, 'Test page', route);
   const returnValue = {
@@ -41,5 +54,5 @@ async function render(ui, { route = '/list', user, ...renderOptions } = {}) {
 
 export * from '@testing-library/react';
 export {
-  render, userEvent, loginAsUser, waitForLoading,
+  render, renderWaitLoading, userEvent, loginAsUser, waitForLoading,
 };

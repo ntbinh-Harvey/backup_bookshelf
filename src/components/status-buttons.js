@@ -61,7 +61,7 @@ function TooltipButton({
 function StatusButtons({ book }) {
   const listItem = useListItem(book.id);
   const dispatch = useDispatch();
-  const update = (updates) => dispatch(updateListItem(updates));
+  const handleMarkAsReadOrUnread = (updates) => dispatch(updateListItem(updates));
   const handleRemoveClick = (id) => dispatch(removeListItem(id));
   const handleAddClick = (bookId) => dispatch(addListItem(bookId));
 
@@ -72,14 +72,14 @@ function StatusButtons({ book }) {
           <TooltipButton
             label="Mark as unread"
             highlight={colors.yellow}
-            onClick={() => update({ id: listItem.id, finishDate: null })}
+            onClick={() => handleMarkAsReadOrUnread({ id: listItem.id, finishDate: null })}
             icon={<FaBook />}
           />
         ) : (
           <TooltipButton
             label="Mark as read"
             highlight={colors.green}
-            onClick={() => update({ id: listItem.id, finishDate: Date.now() })}
+            onClick={() => handleMarkAsReadOrUnread({ id: listItem.id, finishDate: Date.now() })}
             icon={<FaCheckCircle />}
           />
         )

@@ -25,7 +25,7 @@ function Rating({ listItem }) {
   const status = useSelector(selectStatusListItem);
   const isError = status === 'rejected';
   const error = useSelector(selectErrorListItem);
-  const mutate = (updates) => dispatch(updateListItem(updates));
+  const handlePickStars = (updates) => dispatch(updateListItem(updates));
 
   React.useEffect(() => {
     function handleKeyDown(event) {
@@ -52,7 +52,7 @@ function Rating({ listItem }) {
           value={ratingValue}
           checked={ratingValue === listItem.rating}
           onChange={() => {
-            mutate({ id: listItem.id, rating: ratingValue });
+            handlePickStars({ id: listItem.id, rating: ratingValue });
           }}
           css={[
             visuallyHiddenCSS,
