@@ -4,7 +4,7 @@ import { selectUser, refetchUser } from 'reducers/userSlice';
 import { FullPageSpinner, FullPageErrorFallback } from 'components/lib';
 
 import { client } from 'utils/api-client';
-import store from 'app/store';
+import store from 'store';
 import * as auth from 'auth-provider';
 import { refetchListItem } from 'reducers/listItemSlice';
 

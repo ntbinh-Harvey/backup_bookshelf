@@ -79,7 +79,7 @@ export const { resetBookListQuery } = bookSlice.actions;
 
 export { getBookListByQuery, getBook };
 
-export const selectABook = (stateStore) => stateStore.book.book;
+export const selectCurrentBook = (stateStore) => stateStore.book.book;
 
 export const selectBookList = (stateStore) => stateStore.book.books;
 

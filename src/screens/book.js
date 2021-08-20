@@ -4,7 +4,7 @@ import { jsx } from '@emotion/core';
 import * as React from 'react';
 import debounceFn from 'debounce-fn';
 import { useDispatch, useSelector } from 'react-redux';
-import { getBook, selectABook, selectError } from 'reducers/bookSlice';
+import { getBook, selectCurrentBook, selectError } from 'reducers/bookSlice';
 import {
   updateListItem, selectStatusListItem, selectErrorListItem,
 } from 'reducers/listItemSlice';
@@ -24,7 +24,7 @@ function BookScreen() {
   const { bookId } = useParams();
   const listItem = useListItem(bookId);
   const dispatch = useDispatch();
-  const book = useSelector(selectABook);
+  const book = useSelector(selectCurrentBook);
   const error = useSelector(selectError);
   if (error) throw error;
   React.useEffect(() => {
