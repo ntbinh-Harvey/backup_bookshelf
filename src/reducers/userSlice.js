@@ -26,7 +26,7 @@ export const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    prefetchUser: (state, action) => {
+    refetchUser: (state, action) => {
       state.status = action.payload.status;
       state.user = action.payload.user;
       state.error = action.payload.error;
@@ -63,7 +63,7 @@ export const userSlice = createSlice({
   },
 });
 
-export const { prefetchUser, logout } = userSlice.actions;
+export const { refetchUser, logout } = userSlice.actions;
 
 export { login, register };
 

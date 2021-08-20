@@ -8,8 +8,8 @@ import {
 import { ErrorBoundary } from 'react-error-boundary';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectUser, logout } from 'reducers/userSlice';
-import { getBookListByQuery } from 'reducers/bookSlice';
-import { getListItem } from 'reducers/listItemSlice';
+import { getBookListByQuery, resetBookListQuery } from 'reducers/bookSlice';
+import { getListItem, resetListItem } from 'reducers/listItemSlice';
 import { Button, ErrorMessage, FullPageErrorFallback } from './components/lib';
 import * as mq from './styles/media-queries';
 import * as colors from './styles/colors';
@@ -39,6 +39,8 @@ function AuthenticatedApp() {
   const dispatch = useDispatch();
   const handleLogout = () => {
     dispatch(logout());
+    dispatch(resetBookListQuery());
+    dispatch(resetListItem());
   };
   React.useEffect(() => {
     dispatch(getBookListByQuery(''));

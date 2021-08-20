@@ -17,8 +17,6 @@ const initialState = {
 
 const getListItem = createAsyncThunk('listItems/getListItem', async () => {
   const { listItems } = await client('list-items');
-  console.log('listItems', listItems);
-
   return listItems;
 });
 
@@ -44,7 +42,10 @@ export const listItemSlice = createSlice({
   name: 'listItems',
   initialState,
   reducers: {
-    prefetchListItem: (state, action) => {
+    resetListItem: (state) => {
+      state.listItems = initialState.listItems;
+    },
+    refetchListItem: (state, action) => {
       state.status = action.payload.status;
       state.listItems = action.payload.listItems;
     },
@@ -119,7 +120,7 @@ export const listItemSlice = createSlice({
   },
 });
 
-export const { prefetchListItem } = listItemSlice.actions;
+export const { refetchListItem, resetListItem } = listItemSlice.actions;
 
 export {
   getListItem, addListItem, updateListItem, removeListItem,

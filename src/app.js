@@ -1,17 +1,17 @@
 import * as React from 'react';
 import { useSelector } from 'react-redux';
-import { selectUser, prefetchUser } from 'reducers/userSlice';
+import { selectUser, refetchUser } from 'reducers/userSlice';
 import { FullPageSpinner, FullPageErrorFallback } from 'components/lib';
 
 import { client } from 'utils/api-client';
 import store from 'app/store';
 import * as auth from 'auth-provider';
-import { prefetchListItem } from 'reducers/listItemSlice';
+import { refetchListItem } from 'reducers/listItemSlice';
 
 const AuthenticatedApp = React.lazy(() => import(/* webpackPrefetch: true */ './authenticated-app'));
 const UnauthenticatedApp = React.lazy(() => import('./unauthenticated-app'));
 
-async function getPrefetchUser() {
+async function getRefetchData() {
   const userState = {
     status: 'pending', user: null, error: null,
   };
@@ -28,12 +28,12 @@ async function getPrefetchUser() {
     }
     userState.status = 'resolved';
     listItemState.status = 'resolved';
-    store.dispatch(prefetchUser(userState));
-    store.dispatch(prefetchListItem(listItemState));
+    store.dispatch(refetchUser(userState));
+    store.dispatch(refetchListItem(listItemState));
   } catch (error) {
     userState.status = 'rejectedApp';
     userState.error = error;
-    store.dispatch(prefetchUser(userState));
+    store.dispatch(refetchUser(userState));
   }
 }
 
@@ -41,7 +41,7 @@ function App() {
   const { status, user, error } = useSelector(selectUser);
 
   React.useEffect(() => {
-    getPrefetchUser();
+    getRefetchData();
   }, []);
 
   const isIdle = status === 'idle';

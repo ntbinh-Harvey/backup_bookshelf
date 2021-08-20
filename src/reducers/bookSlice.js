@@ -43,6 +43,9 @@ export const bookSlice = createSlice({
   name: 'book',
   initialState,
   reducers: {
+    resetBookListQuery: (state) => {
+      state.books = initialState.books;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -72,7 +75,7 @@ export const bookSlice = createSlice({
   },
 });
 
-// export const {} = bookSlice.actions;
+export const { resetBookListQuery } = bookSlice.actions;
 
 export { getBookListByQuery, getBook };
 
