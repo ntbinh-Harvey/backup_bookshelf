@@ -3,7 +3,12 @@ import { jsx } from '@emotion/core';
 
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectUser, login, register } from 'reducers/userSlice';
+import {
+  selectUser, login, register,
+} from 'reducers/userSlice';
+
+// import { replaceAt } from 'react-query/types/core/utils';
+import { log } from 'cypress/lib/logger';
 import {
   Input, Button, Spinner, FormGroup, ErrorMessage,
 } from './components/lib';
@@ -12,11 +17,17 @@ import { Logo } from './components/logo';
 
 function LoginForm({ onSubmit, submitButton }) {
   const { status, error } = useSelector(selectUser);
+  const [errorValidate, setErrorValidate] = React.useState(true);
+  const [isFocus, setIsFocus] = React.useState(false);
   const isLoading = status === 'pending';
   const isError = status === 'rejectedUnauthenticated';
   function handleSubmit(event) {
     event.preventDefault();
     const { username, password } = event.target.elements;
+    if (password.value.length < 6) {
+      setErrorValidate(false);
+      return;
+    }
 
     onSubmit({
       username: username.value,
@@ -44,12 +55,26 @@ function LoginForm({ onSubmit, submitButton }) {
       </FormGroup>
       <FormGroup>
         <label htmlFor="password">Password</label>
-        <Input id="password" type="password" />
+        <Input
+          id="password"
+          type="password"
+          onFocus={() => setIsFocus(true)}
+          onBlur={() => setIsFocus(false)}
+          onChange={(event) => {
+            console.log(event.target.value);
+            if (event.target.value.length >= 6) {
+              setErrorValidate(false);
+            } else {
+              setErrorValidate(true);
+            }
+          }}
+        />
+        <p style={{ color: 'red', fontSize: 12 }}>{errorValidate && isFocus ? 'Password must be at least 6 characters' : null }</p>
       </FormGroup>
       <div>
         {React.cloneElement(
           submitButton,
-          { type: 'submit' },
+          { type: 'submit', disabled: errorValidate === true, variant: errorValidate === true ? 'secondary' : 'primary' },
           ...(Array.isArray(submitButton.props.children)
             ? submitButton.props.children
             : [submitButton.props.children]),
