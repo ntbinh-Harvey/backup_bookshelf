@@ -3,14 +3,15 @@ import { client } from 'utils/api-client';
 
 let oldListItem;
 
-const status = {
+const Status = {
+  idle: 'idle',
   pending: 'pending',
   resolved: 'resolved',
   rejected: 'rejected',
 };
 
 const initialState = {
-  status: 'idle',
+  status: Status.idle,
   listItems: [],
   error: null,
 };
@@ -53,10 +54,10 @@ export const listItemSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(getListItem.pending, (state) => {
-        state.status = status.pending;
+        state.status = Status.pending;
       })
       .addCase(addListItem.pending, (state) => {
-        state.status = status.pending;
+        state.status = Status.pending;
       })
       .addCase(updateListItem.pending, (state, action) => {
         if (action.meta.arg.rating) {
@@ -70,35 +71,35 @@ export const listItemSlice = createSlice({
           });
         }
         if (action.meta.arg.notes) {
-          state.status = status.pending;
+          state.status = Status.pending;
         }
       })
       .addCase(removeListItem.pending, (state) => {
-        state.status = status.pending;
+        state.status = Status.pending;
       })
       .addCase(getListItem.fulfilled, (state, action) => {
-        state.status = status.resolved;
+        state.status = Status.resolved;
         state.listItems = action.payload;
       })
       .addCase(addListItem.fulfilled, (state, action) => {
-        state.status = status.resolved;
+        state.status = Status.resolved;
         state.listItems.unshift(action.payload);
       })
       .addCase(updateListItem.fulfilled, (state, action) => {
-        state.status = status.resolved;
+        state.status = Status.resolved;
         state.listItems = state.listItems.map((listItem) => (listItem.id === action.payload.id ? action.payload : listItem));
       })
       .addCase(removeListItem.fulfilled, (state, action) => {
-        state.status = status.resolved;
+        state.status = Status.resolved;
         const index = state.listItems.map((listItem) => listItem.id).indexOf(action.payload);
         state.listItems.splice(index, 1);
       })
       .addCase(getListItem.rejected, (state, action) => {
-        state.status = status.rejected;
+        state.status = Status.rejected;
         state.error = action.error;
       })
       .addCase(addListItem.rejected, (state, action) => {
-        state.status = status.rejected;
+        state.status = Status.rejected;
         state.error = action.error;
       })
       .addCase(updateListItem.rejected, (state, action) => {
@@ -110,11 +111,11 @@ export const listItemSlice = createSlice({
             return listItem;
           });
         }
-        state.status = status.rejected;
+        state.status = Status.rejected;
         state.error = action.error;
       })
       .addCase(removeListItem.rejected, (state, action) => {
-        state.status = status.rejected;
+        state.status = Status.rejected;
         state.error = action.error;
       });
   },

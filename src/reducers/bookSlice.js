@@ -2,7 +2,8 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { client } from 'utils/api-client';
 import bookPlaceholderSvg from 'assets/book-placeholder.svg';
 
-const status = {
+const Status = {
+  idle: 'idle',
   pending: 'pending',
   resolved: 'resolved',
   rejected: 'rejected',
@@ -23,7 +24,7 @@ const loadingBooks = Array.from({ length: 10 }, (v, index) => ({
 }));
 
 const initialState = {
-  status: 'idle',
+  status: Status.idle,
   book: loadingBook,
   books: loadingBooks,
   error: null,
@@ -43,39 +44,40 @@ export const bookSlice = createSlice({
   name: 'book',
   initialState,
   reducers: {
-    resetBookListQuery: (state) => {
+    resetBook: (state) => {
       state.books = initialState.books;
+      state.book = initialState.book;
     },
   },
   extraReducers: (builder) => {
     builder
       .addCase(getBookListByQuery.pending, (state) => {
-        state.status = status.pending;
+        state.status = Status.pending;
       })
       .addCase(getBook.pending, (state) => {
-        state.status = status.pending;
+        state.status = Status.pending;
         state.book = loadingBook;
       })
       .addCase(getBookListByQuery.fulfilled, (state, action) => {
-        state.status = status.resolved;
+        state.status = Status.resolved;
         state.books = action.payload;
       })
       .addCase(getBook.fulfilled, (state, action) => {
-        state.status = status.resolved;
+        state.status = Status.resolved;
         state.book = action.payload;
       })
       .addCase(getBookListByQuery.rejected, (state, action) => {
-        state.status = status.rejected;
+        state.status = Status.rejected;
         state.error = action.error;
       })
       .addCase(getBook.rejected, (state, action) => {
-        state.status = status.rejected;
+        state.status = Status.rejected;
         state.error = action.error;
       });
   },
 });
 
-export const { resetBookListQuery } = bookSlice.actions;
+export const { resetBook } = bookSlice.actions;
 
 export { getBookListByQuery, getBook };
 
