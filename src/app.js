@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useSelector } from 'react-redux';
+import { Route } from 'react-router-dom';
 import { selectUser, refetchUser } from 'reducers/userSlice';
 import { FullPageSpinner, FullPageErrorFallback } from 'components/lib';
 
@@ -56,7 +57,7 @@ function App() {
 
   return (
     <React.Suspense fallback={<FullPageSpinner />}>
-      {user ? <AuthenticatedApp /> : <UnauthenticatedApp />}
+      <Route to="/authentication" element={user ? <AuthenticatedApp /> : <UnauthenticatedApp />} />
     </React.Suspense>
   );
 }

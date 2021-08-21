@@ -1,5 +1,5 @@
 function proxy(app) {
-  app.get(/^\/$/, (req, res) => res.redirect('/list'));
+  app.get(/^\/$/, (req, res) => res.redirect('/authentication'));
 
   // https://twitter.com/kentcdodds/status/1299182472412958722
   // if you can figure out how we can avoid this that'd be great

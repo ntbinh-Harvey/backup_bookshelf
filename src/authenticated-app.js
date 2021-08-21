@@ -3,12 +3,13 @@ import { jsx } from '@emotion/core';
 
 import React from 'react';
 import {
-  Routes, Route, Link as RouterLink, useMatch,
+  Routes, Route, Link as RouterLink, useMatch, useNavigate, useLocation,
 } from 'react-router-dom';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useSelector, useDispatch } from 'react-redux';
+import { toast, ToastContainer } from 'react-toastify';
 import { selectUser, logout } from 'reducers/userSlice';
-import { getBookListByQuery, resetBookListQuery } from 'reducers/bookSlice';
+import { getBookListByQuery, resetBook, selectCurrentBook } from 'reducers/bookSlice';
 import { getListItem, resetListItem } from 'reducers/listItemSlice';
 import { Button, ErrorMessage, FullPageErrorFallback } from './components/lib';
 import * as mq from './styles/media-queries';
@@ -35,11 +36,22 @@ function ErrorFallback({ error }) {
 }
 
 function AuthenticatedApp() {
+  const notify = () => { toast.success('Login successfully!'); };
+  const navigate = useNavigate();
+  const location = useLocation();
+  React.useEffect(() => {
+    if (location.pathname === '/authentication') {
+      navigate('/discover');
+      notify();
+    }
+  }, [location.pathname, navigate]);
+  // navigate('/discover');
   const { user } = useSelector(selectUser);
   const dispatch = useDispatch();
   const handleLogout = () => {
+    navigate('/authentication');
     dispatch(logout());
-    dispatch(resetBookListQuery());
+    dispatch(resetBook());
     dispatch(resetListItem());
   };
   React.useEffect(() => {
@@ -88,6 +100,7 @@ function AuthenticatedApp() {
           </ErrorBoundary>
         </main>
       </div>
+      <ToastContainer autoClose={3000} />
     </ErrorBoundary>
   );
 }
@@ -129,6 +142,7 @@ function NavLink(props) {
 }
 
 function Nav() {
+  const { id } = useSelector(selectCurrentBook);
   return (
     <nav
       css={{
@@ -150,13 +164,16 @@ function Nav() {
         }}
       >
         <li>
+          <NavLink to="/discover">Discover</NavLink>
+        </li>
+        <li>
           <NavLink to="/list">Reading List</NavLink>
         </li>
         <li>
           <NavLink to="/finished">Finished Books</NavLink>
         </li>
         <li>
-          <NavLink to="/discover">Discover</NavLink>
+          <NavLink to={`book/${id}`}>Book Detail</NavLink>
         </li>
       </ul>
     </nav>
