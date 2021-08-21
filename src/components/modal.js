@@ -3,6 +3,8 @@ import { jsx } from '@emotion/core';
 
 import * as React from 'react';
 import VisuallyHidden from '@reach/visually-hidden';
+import { useDispatch } from 'react-redux';
+import { resetError } from 'reducers/userSlice';
 import { Dialog, CircleButton } from './lib';
 
 const callAll = (...fns) => (...args) => fns.forEach((fn) => fn && fn(...args));
@@ -11,7 +13,6 @@ const ModalContext = React.createContext();
 
 function Modal(props) {
   const [isOpen, setIsOpen] = React.useState(false);
-
   return <ModalContext.Provider value={[isOpen, setIsOpen]} {...props} />;
 }
 
@@ -30,9 +31,10 @@ function ModalOpenButton({ children: child }) {
 }
 
 function ModalContentsBase(props) {
+  const dispatch = useDispatch();
   const [isOpen, setIsOpen] = React.useContext(ModalContext);
   return (
-    <Dialog isOpen={isOpen} onDismiss={() => setIsOpen(false)} {...props} />
+    <Dialog isOpen={isOpen} onDismiss={() => { setIsOpen(false); dispatch(resetError()); }} {...props} />
   );
 }
 
