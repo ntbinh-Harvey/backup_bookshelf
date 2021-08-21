@@ -59,7 +59,7 @@ function AuthenticatedApp() {
         }}
       >
         {user.username}
-        <Button variant="secondary" css={{ marginLeft: '10px' }} onClick={handleLogout}>
+        <Button variant="primary" css={{ marginLeft: '10px' }} onClick={handleLogout}>
           Logout
         </Button>
       </div>

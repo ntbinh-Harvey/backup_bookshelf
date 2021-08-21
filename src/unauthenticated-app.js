@@ -98,12 +98,12 @@ function UnauthenticatedApp() {
         </Modal>
         <Modal>
           <ModalOpenButton>
-            <Button variant="secondary">Register</Button>
+            <Button variant="primary">Register</Button>
           </ModalOpenButton>
           <ModalContents aria-label="Registration form" title="Register">
             <LoginForm
               onSubmit={handleRegister}
-              submitButton={<Button variant="secondary">Register</Button>}
+              submitButton={<Button variant="primary">Register</Button>}
             />
           </ModalContents>
         </Modal>
