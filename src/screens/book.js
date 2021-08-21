@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
 
@@ -21,7 +22,10 @@ import { Profiler } from 'components/profiler';
 import { StatusButtons } from 'components/status-buttons';
 
 function BookScreen() {
+  const errorNoBookVisitedBefore = { message: 'Oops, you have to see details of an arbitrary book first' };
+  const [fullSypnosis, setFullSypnosis] = React.useState(false);
   const { bookId } = useParams();
+  if (bookId === 'undefined') throw errorNoBookVisitedBefore;
   const listItem = useListItem(bookId);
   const dispatch = useDispatch();
   const book = useSelector(selectCurrentBook);
@@ -33,6 +37,8 @@ function BookScreen() {
   const {
     title, author, coverImageUrl, publisher, synopsis,
   } = book;
+  const index = synopsis.indexOf('.');
+  const synopsisShortVersion = synopsis.slice(0, index + 1);
 
   return (
     <Profiler id="Book Screen" metadata={{ bookId, listItemId: listItem?.id }}>
@@ -83,7 +89,15 @@ function BookScreen() {
             </div>
             <br />
             <p css={{ whiteSpace: 'break-spaces', display: 'block' }}>
-              {synopsis}
+              {fullSypnosis === false ? synopsisShortVersion : synopsis}
+              <button
+                css={{
+                  border: '0 solid black', backgroundColor: '#fff', color: 'blue', ':hover': { textDecoration: 'underline' },
+                }}
+                onClick={() => setFullSypnosis(!fullSypnosis)}
+              >
+                {fullSypnosis === false ? '>>>Read more' : '<<<Read less'}
+              </button>
             </p>
           </div>
         </div>
