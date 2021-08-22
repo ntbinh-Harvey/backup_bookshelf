@@ -8,7 +8,7 @@ import {
 } from 'reducers/userSlice';
 
 // import { replaceAt } from 'react-query/types/core/utils';
-import { log } from 'cypress/lib/logger';
+// import { log } from 'cypress/lib/logger';
 import {
   Input, Button, Spinner, FormGroup, ErrorMessage,
 } from './components/lib';

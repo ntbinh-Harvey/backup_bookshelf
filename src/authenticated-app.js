@@ -45,7 +45,6 @@ function AuthenticatedApp() {
       notify();
     }
   }, [location.pathname, navigate]);
-  // navigate('/discover');
   const { user } = useSelector(selectUser);
   const dispatch = useDispatch();
   const handleLogout = () => {

@@ -5,34 +5,38 @@ import { jsx } from '@emotion/core';
 import * as React from 'react';
 import debounceFn from 'debounce-fn';
 import { useDispatch, useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
 import { getBook, selectCurrentBook, selectError } from 'reducers/bookSlice';
 import {
   updateListItem, selectStatusListItem, selectErrorListItem,
 } from 'reducers/listItemSlice';
 import { FaRegCalendarAlt } from 'react-icons/fa';
+import {
+  Link, Spinner, Textarea, ErrorMessage,
+} from 'components/lib';
 import Tooltip from '@reach/tooltip';
-import { useParams } from 'react-router-dom';
 import { formatDate } from 'utils/misc';
 import { useListItem } from 'utils/hooks';
 import * as mq from 'styles/media-queries';
 import * as colors from 'styles/colors';
-import { Spinner, Textarea, ErrorMessage } from 'components/lib';
 import { Rating } from 'components/rating';
 import { Profiler } from 'components/profiler';
 import { StatusButtons } from 'components/status-buttons';
 
 function BookScreen() {
-  const errorNoBookVisitedBefore = { message: 'Oops, you have to see details of an arbitrary book first' };
+  // const errorNoBookVisitedBefore = 'Oops, you have to see details of an arbitrary book first';
   const [fullSypnosis, setFullSypnosis] = React.useState(false);
   const { bookId } = useParams();
-  if (bookId === 'undefined') throw errorNoBookVisitedBefore;
+  // if (bookId === 'undefined') throw errorNoBookVisitedBefore;
   const listItem = useListItem(bookId);
   const dispatch = useDispatch();
   const book = useSelector(selectCurrentBook);
   const error = useSelector(selectError);
   if (error) throw error;
   React.useEffect(() => {
-    dispatch(getBook(bookId));
+    if (bookId !== 'undefined') {
+      dispatch(getBook(bookId));
+    }
   }, [bookId, dispatch]);
   const {
     title, author, coverImageUrl, publisher, synopsis,
@@ -42,69 +46,89 @@ function BookScreen() {
 
   return (
     <Profiler id="Book Screen" metadata={{ bookId, listItemId: listItem?.id }}>
-      <div>
-        <div
-          css={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 2fr',
-            gridGap: '2em',
-            marginBottom: '1em',
-            [mq.small]: {
-              display: 'flex',
-              flexDirection: 'column',
-            },
-          }}
-        >
-          <img
-            src={coverImageUrl}
-            alt={`${title} book cover`}
-            css={{ width: '100%', maxWidth: '14rem' }}
-          />
+      {bookId === 'undefined' ? (
+        <div css={{ marginTop: '1em', fontSize: '1.2em' }}>
+          <p>
+            Looks like you've to see details of a book first! Check them out in your
+            {' '}
+            <Link to="/list">reading list</Link>
+            {' '}
+            or
+            {' '}
+            <Link to="/finished">finish list</Link>
+            {' '}
+            or
+            {' '}
+            <Link to="/discover">discover more</Link>
+            .
+          </p>
+        </div>
+      )
+        : (
           <div>
-            <div css={{ display: 'flex', position: 'relative' }}>
-              <div css={{ flex: 1, justifyContent: 'space-between' }}>
-                <h1>{title}</h1>
-                <div>
-                  <i>{author}</i>
-                  <span css={{ marginRight: 6, marginLeft: 6 }}>|</span>
-                  <i>{publisher}</i>
-                </div>
-              </div>
-              <div
-                css={{
-                  right: 0,
-                  color: colors.gray80,
+            <div
+              css={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 2fr',
+                gridGap: '2em',
+                marginBottom: '1em',
+                [mq.small]: {
                   display: 'flex',
                   flexDirection: 'column',
-                  justifyContent: 'space-around',
-                  minHeight: 100,
-                }}
-              >
-                {book.loadingBook ? null : <StatusButtons book={book} />}
+                },
+              }}
+            >
+              <img
+                src={coverImageUrl}
+                alt={`${title} book cover`}
+                css={{ width: '100%', maxWidth: '14rem' }}
+              />
+              <div>
+                <div css={{ display: 'flex', position: 'relative' }}>
+                  <div css={{ flex: 1, justifyContent: 'space-between' }}>
+                    <h1>{title}</h1>
+                    <div>
+                      <i>{author}</i>
+                      <span css={{ marginRight: 6, marginLeft: 6 }}>|</span>
+                      <i>{publisher}</i>
+                    </div>
+                  </div>
+                  <div
+                    css={{
+                      right: 0,
+                      color: colors.gray80,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'space-around',
+                      minHeight: 100,
+                    }}
+                  >
+                    {book.loadingBook ? null : <StatusButtons book={book} />}
+                  </div>
+                </div>
+                <div css={{ marginTop: 10, minHeight: 46 }}>
+                  {listItem?.finishDate ? <Rating listItem={listItem} /> : null}
+                  {listItem ? <ListItemTimeframe listItem={listItem} /> : null}
+                </div>
+                <br />
+                <p css={{ whiteSpace: 'break-spaces', display: 'block' }}>
+                  {fullSypnosis === false ? synopsisShortVersion : synopsis}
+                  <button
+                    css={{
+                      border: '0 solid black', backgroundColor: '#fff', color: colors.indigo, ':hover': { textDecoration: 'underline', colors: colors.indigoDarken10 },
+                    }}
+                    onClick={() => setFullSypnosis(!fullSypnosis)}
+                  >
+                    {fullSypnosis === false ? '>>>Read more' : '<<<Read less'}
+                  </button>
+                </p>
               </div>
             </div>
-            <div css={{ marginTop: 10, minHeight: 46 }}>
-              {listItem?.finishDate ? <Rating listItem={listItem} /> : null}
-              {listItem ? <ListItemTimeframe listItem={listItem} /> : null}
-            </div>
-            <br />
-            <p css={{ whiteSpace: 'break-spaces', display: 'block' }}>
-              {fullSypnosis === false ? synopsisShortVersion : synopsis}
-              <button
-                css={{
-                  border: '0 solid black', backgroundColor: '#fff', color: 'blue', ':hover': { textDecoration: 'underline' },
-                }}
-                onClick={() => setFullSypnosis(!fullSypnosis)}
-              >
-                {fullSypnosis === false ? '>>>Read more' : '<<<Read less'}
-              </button>
-            </p>
+            {!book.loadingBook && listItem ? (
+              <NotesTextarea listItem={listItem} />
+            ) : null}
           </div>
-        </div>
-        {!book.loadingBook && listItem ? (
-          <NotesTextarea listItem={listItem} />
-        ) : null}
-      </div>
+        )}
     </Profiler>
   );
 }
