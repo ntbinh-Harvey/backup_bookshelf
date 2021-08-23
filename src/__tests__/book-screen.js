@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {
-  render,
+  renderWaitLoading as render,
   screen,
   waitForLoading,
   userEvent,
@@ -20,9 +20,11 @@ async function renderBookScreen({ user, book, listItem } = {}) {
   if (user === undefined) {
     user = await loginAsUser();
   }
+
   if (book === undefined) {
     book = await booksDB.create(buildBook());
   }
+
   if (listItem === undefined) {
     listItem = await listItemsDB.create(buildListItem({ owner: user, book }));
   }
@@ -46,7 +48,9 @@ test('renders all the book information', async () => {
     'src',
     book.coverImageUrl,
   );
-  expect(screen.getByRole('button', { name: /add to list/i })).toBeInTheDocument();
+  expect(
+    screen.getByRole('button', { hidden: true, name: /add to list/i }),
+  ).toBeInTheDocument();
   expect(
     screen.queryByRole('button', { name: /remove from list/i }),
   ).not.toBeInTheDocument();
@@ -182,8 +186,9 @@ describe('console errors', () => {
     userEvent.type(notesTextarea, newNotes);
     await screen.findByLabelText(/loading/i);
     await waitForLoading();
-    expect(screen.getByRole('alert').textContent).toMatchInlineSnapshot(
+    expect(screen.getAllByRole('alert').textContent).toMatchInlineSnapshot(
       '"There was an error: __test_error_message__"',
+      'undefined',
     );
     server.resetHandlers();
   });

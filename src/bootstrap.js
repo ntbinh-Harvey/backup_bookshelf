@@ -1,6 +1,7 @@
 import 'stop-runaway-react-effects/hijack';
 import './test/server';
 import 'bootstrap/dist/css/bootstrap-reboot.css';
+import 'react-toastify/dist/ReactToastify.css';
 import '@reach/dialog/styles.css';
 import '@reach/menu-button/styles.css';
 import '@reach/tooltip/styles.css';

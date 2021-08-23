@@ -1,29 +1,44 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
 
 import * as React from 'react';
 import debounceFn from 'debounce-fn';
-import { FaRegCalendarAlt } from 'react-icons/fa';
-import Tooltip from '@reach/tooltip';
+import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { useBook } from 'utils/books';
+import { getBook, selectCurrentBook, selectError } from 'reducers/bookSlice';
+import {
+  updateListItem, selectStatusListItem, selectErrorListItem,
+} from 'reducers/listItemSlice';
+import { FaRegCalendarAlt } from 'react-icons/fa';
+import {
+  Spinner, Textarea, ErrorMessage,
+} from 'components/lib';
+import Tooltip from '@reach/tooltip';
 import { formatDate } from 'utils/misc';
-import { useListItem, useUpdateListItem } from 'utils/list-items';
+import { useListItem } from 'utils/hooks';
 import * as mq from 'styles/media-queries';
 import * as colors from 'styles/colors';
-import { Spinner, Textarea, ErrorMessage } from 'components/lib';
 import { Rating } from 'components/rating';
 import { Profiler } from 'components/profiler';
 import { StatusButtons } from 'components/status-buttons';
 
 function BookScreen() {
+  const [fullSypnosis, setFullSypnosis] = React.useState(false);
   const { bookId } = useParams();
-  const book = useBook(bookId);
   const listItem = useListItem(bookId);
-
+  const dispatch = useDispatch();
+  const book = useSelector(selectCurrentBook);
+  const error = useSelector(selectError);
+  if (error) throw error;
+  React.useEffect(() => {
+    dispatch(getBook(bookId));
+  }, [bookId, dispatch]);
   const {
     title, author, coverImageUrl, publisher, synopsis,
   } = book;
+  const index = synopsis.indexOf('.');
+  const synopsisShortVersion = `${synopsis.slice(0, index)}...`;
 
   return (
     <Profiler id="Book Screen" metadata={{ bookId, listItemId: listItem?.id }}>
@@ -74,7 +89,15 @@ function BookScreen() {
             </div>
             <br />
             <p css={{ whiteSpace: 'break-spaces', display: 'block' }}>
-              {synopsis}
+              {fullSypnosis === false ? synopsisShortVersion : synopsis}
+              <button
+                css={{
+                  border: '0 solid black', backgroundColor: '#fff', color: colors.indigo, ':hover': { textDecoration: 'underline', colors: colors.indigoDarken10 },
+                }}
+                onClick={() => setFullSypnosis(!fullSypnosis)}
+              >
+                {fullSypnosis === false ? '>>>Read more' : '<<<Read less'}
+              </button>
             </p>
           </div>
         </div>
@@ -106,12 +129,15 @@ function ListItemTimeframe({ listItem }) {
 }
 
 function NotesTextarea({ listItem }) {
-  const {
-    mutate, error, isError, isLoading,
-  } = useUpdateListItem();
+  const status = useSelector(selectStatusListItem);
+  const error = useSelector(selectErrorListItem);
+  const isError = status === 'rejected';
+  const isLoading = status === 'pending';
+  const dispatch = useDispatch();
+  const handleSendNote = React.useCallback((updates) => dispatch(updateListItem(updates)), [dispatch]);
 
-  const debouncedMutate = React.useMemo(() => debounceFn(mutate, { wait: 300 }), [
-    mutate,
+  const debouncedMutate = React.useMemo(() => debounceFn(handleSendNote, { wait: 300 }), [
+    handleSendNote,
   ]);
 
   function handleNotesChange(e) {

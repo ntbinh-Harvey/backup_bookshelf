@@ -127,14 +127,14 @@ function ErrorMessage({ error, variant = 'stacked', ...props }) {
       {...props}
     >
       <span>There was an error: </span>
-      <pre
+      <span
         css={[
           { whiteSpace: 'break-spaces', margin: '0', marginBottom: -5 },
           errorMessageVariants[variant],
         ]}
       >
         {error.message}
-      </pre>
+      </span>
     </div>
   );
 }
@@ -153,7 +153,7 @@ function FullPageErrorFallback({ error }) {
       }}
     >
       <p>Uh oh... There's a problem. Try refreshing the app.</p>
-      <pre>{error.message}</pre>
+      <p>{error.message}</p>
     </div>
   );
 }

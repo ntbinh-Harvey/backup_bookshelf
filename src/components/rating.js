@@ -2,7 +2,8 @@
 import { jsx } from '@emotion/core';
 
 import * as React from 'react';
-import { useUpdateListItem } from 'utils/list-items';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectStatusListItem, selectErrorListItem, updateListItem } from 'reducers/listItemSlice';
 import { FaStar } from 'react-icons/fa';
 import * as colors from 'styles/colors';
 import { ErrorMessage } from 'components/lib';
@@ -20,8 +21,11 @@ const visuallyHiddenCSS = {
 
 function Rating({ listItem }) {
   const [isTabbing, setIsTabbing] = React.useState(false);
-
-  const { mutate, error, isError } = useUpdateListItem();
+  const dispatch = useDispatch();
+  const status = useSelector(selectStatusListItem);
+  const isError = status === 'rejected';
+  const error = useSelector(selectErrorListItem);
+  const handlePickStars = (updates) => dispatch(updateListItem(updates));
 
   React.useEffect(() => {
     function handleKeyDown(event) {
@@ -48,7 +52,7 @@ function Rating({ listItem }) {
           value={ratingValue}
           checked={ratingValue === listItem.rating}
           onChange={() => {
-            mutate({ id: listItem.id, rating: ratingValue });
+            handlePickStars({ id: listItem.id, rating: ratingValue });
           }}
           css={[
             visuallyHiddenCSS,

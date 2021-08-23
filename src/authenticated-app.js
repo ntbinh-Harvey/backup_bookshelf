@@ -1,14 +1,21 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
 
+import React from 'react';
 import {
-  Routes, Route, Link as RouterLink, useMatch,
+  Routes, Route, Link as RouterLink, useMatch, useNavigate, useLocation,
 } from 'react-router-dom';
 import { ErrorBoundary } from 'react-error-boundary';
-import { Button, ErrorMessage, FullPageErrorFallback } from './components/lib';
+import { useSelector, useDispatch } from 'react-redux';
+import { toast, ToastContainer } from 'react-toastify';
+import { selectUser, logout } from 'reducers/userSlice';
+import { getBookListByQuery, selectCurrentBook } from 'reducers/bookSlice';
+import { getListItem } from 'reducers/listItemSlice';
+import {
+  Button, ErrorMessage, FullPageErrorFallback, Link,
+} from './components/lib';
 import * as mq from './styles/media-queries';
 import * as colors from './styles/colors';
-import { useAuth } from './context/auth-context';
 import { ReadingListScreen } from './screens/reading-list';
 import { FinishedScreen } from './screens/finished';
 import { DiscoverBooksScreen } from './screens/discover';
@@ -31,7 +38,26 @@ function ErrorFallback({ error }) {
 }
 
 function AuthenticatedApp() {
-  const { user, logout } = useAuth();
+  const notify = () => { toast.success('Login successfully!'); };
+  const navigate = useNavigate();
+  const location = useLocation();
+  React.useEffect(() => {
+    if (location.pathname === '/authentication') {
+      navigate('/discover');
+      notify();
+    }
+  }, [location.pathname, navigate]);
+  const { user } = useSelector(selectUser);
+  const dispatch = useDispatch();
+  const handleLogout = () => {
+    navigate('/authentication');
+    dispatch(logout());
+  };
+  React.useEffect(() => {
+    dispatch(getBookListByQuery(''));
+    dispatch(getListItem());
+  }, [dispatch]);
+
   return (
     <ErrorBoundary FallbackComponent={FullPageErrorFallback}>
       <div
@@ -44,7 +70,7 @@ function AuthenticatedApp() {
         }}
       >
         {user.username}
-        <Button variant="secondary" css={{ marginLeft: '10px' }} onClick={logout}>
+        <Button variant="primary" css={{ marginLeft: '10px' }} onClick={handleLogout}>
           Logout
         </Button>
       </div>
@@ -73,6 +99,7 @@ function AuthenticatedApp() {
           </ErrorBoundary>
         </main>
       </div>
+      <ToastContainer autoClose={3000} />
     </ErrorBoundary>
   );
 }
@@ -114,6 +141,7 @@ function NavLink(props) {
 }
 
 function Nav() {
+  const { id } = useSelector(selectCurrentBook);
   return (
     <nav
       css={{
@@ -135,13 +163,16 @@ function Nav() {
         }}
       >
         <li>
+          <NavLink to="/discover">Discover</NavLink>
+        </li>
+        <li>
           <NavLink to="/list">Reading List</NavLink>
         </li>
         <li>
           <NavLink to="/finished">Finished Books</NavLink>
         </li>
         <li>
-          <NavLink to="/discover">Discover</NavLink>
+          <NavLink to={`book${id === undefined ? '' : `/${id}`}`}>Book Detail</NavLink>
         </li>
       </ul>
     </nav>
@@ -154,8 +185,29 @@ function AppRoutes() {
       <Route path="/list" element={<ReadingListScreen />} />
       <Route path="/finished" element={<FinishedScreen />} />
       <Route path="/discover" element={<DiscoverBooksScreen />} />
+      <Route
+        path="/book"
+        element={(
+          <div css={{ marginTop: '1em', fontSize: '1.2em' }}>
+            <p>
+              Looks like you've to see details of a book first! Check them out in your
+              {' '}
+              <Link to="/list">reading list</Link>
+              {' '}
+              or
+              {' '}
+              <Link to="/finished">finish list</Link>
+              {' '}
+              or
+              {' '}
+              <Link to="/discover">discover more</Link>
+              .
+            </p>
+          </div>
+      )}
+      />
       <Route path="/book/:bookId" element={<BookScreen />} />
-      <Route path="*" element={<NotFoundScreen />} />
+      <Route path="*" element={<NotFoundScreen to="/discover" linkMessage="Go back to disocover page" />} />
     </Routes>
   );
 }

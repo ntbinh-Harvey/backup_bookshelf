@@ -17,6 +17,7 @@
     "@reach/tabs": "^0.15.0",
     "@reach/tooltip": "^0.15.0",
     "@reach/visually-hidden": "^0.15.0",
+    "@reduxjs/toolkit": "^1.6.1",
     "bootstrap": "^4.6.0",
     "codegen.macro": "^4.1.0",
     "debounce-fn": "^4.0.0",
@@ -31,9 +32,11 @@
     "react-icons": "^4.2.0",
     "react-query": "^3.13.12",
     "react-query-devtools": "^2.6.3",
+    "react-redux": "^7.2.4",
     "react-router": "^6.0.0-beta.0",
     "react-router-dom": "^6.0.0-beta.0",
     "react-scripts": "^4.0.3",
+    "react-toastify": "^7.0.4",
     "stop-runaway-react-effects": "^2.0.0"
   },
   "devDependencies": {
@@ -93,10 +96,9 @@
       "import/no-unresolved": 0,
       "no-param-reassign": 0,
       "react/jsx-filename-extension": 0,
-      "no-use-before-define": 0, 
-      "no-console": 0,
+      "no-use-before-define": 0,
+      "import/prefer-default-export": 0,
       "no-restricted-syntax": 0,
-      "import/prefer-default-export" : 0,
       "no-shadow": 0,
       "react/prop-types": 0,
       "no-nested-ternary": 0,
@@ -105,15 +107,18 @@
       "no-bitwise": 0,
       "no-plusplus": 0,
       "global-require": 0,
-      "jsx-a11y/label-has-associated-control" : 0,
+      "jsx-a11y/label-has-associated-control": 0,
       "no-return-assign": 0,
       "no-void": 0,
       "react/no-unescaped-entities": 0,
       "max-len": 0,
       "react/button-has-type": 0,
       "jsx-a11y/click-events-have-key-events": 0,
-      "jsx-a11y/no-static-element-interactions": 0
-
+      "jsx-a11y/no-static-element-interactions": 0,
+      "no-console": 0,
+      "no-unused-vars": 1,
+      "no-debugger": 1,
+      "no-undef": 1
     }
   },
   "husky": {

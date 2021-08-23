@@ -1,15 +1,18 @@
 import * as React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import store from 'store';
 import { QueryClientProvider } from './query-client';
-import { AuthProvider } from './auth-context';
 
 function AppProviders({ children }) {
   return (
-    <QueryClientProvider>
-      <Router>
-        <AuthProvider>{children}</AuthProvider>
-      </Router>
-    </QueryClientProvider>
+    <Provider store={store}>
+      <QueryClientProvider>
+        <Router>
+          {children}
+        </Router>
+      </QueryClientProvider>
+    </Provider>
   );
 }
 

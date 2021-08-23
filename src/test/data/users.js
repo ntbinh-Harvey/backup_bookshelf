@@ -30,6 +30,11 @@ function validateUserForm({ username, password }) {
     error.status = 400;
     throw error;
   }
+  if (password.length < 6) {
+    const error = new Error('Password must be at least 6 characters');
+    error.status = 400;
+    throw error;
+  }
 }
 
 async function authenticate({ username, password }) {

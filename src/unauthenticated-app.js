@@ -2,28 +2,36 @@
 import { jsx } from '@emotion/core';
 
 import * as React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Routes, Route } from 'react-router-dom';
+import {
+  selectUser, login, register,
+} from 'reducers/userSlice';
 import {
   Input, Button, Spinner, FormGroup, ErrorMessage,
 } from './components/lib';
 import { Modal, ModalContents, ModalOpenButton } from './components/modal';
 import { Logo } from './components/logo';
-import { useAuth } from './context/auth-context';
-import { useAsync } from './utils/hooks';
+import { NotFoundScreen } from './screens/not-found';
 
 function LoginForm({ onSubmit, submitButton }) {
-  const {
-    isLoading, isError, error, run,
-  } = useAsync();
+  const { status, error } = useSelector(selectUser);
+  const [errorValidate, setErrorValidate] = React.useState(true);
+  const [isFocus, setIsFocus] = React.useState(false);
+  const isLoading = status === 'pending';
+  const isError = status === 'rejectedUnauthenticated';
   function handleSubmit(event) {
     event.preventDefault();
     const { username, password } = event.target.elements;
+    if (password.value.length < 6) {
+      setErrorValidate(false);
+      return;
+    }
 
-    run(
-      onSubmit({
-        username: username.value,
-        password: password.value,
-      }),
-    );
+    onSubmit({
+      username: username.value,
+      password: password.value,
+    });
   }
 
   return (
@@ -46,12 +54,25 @@ function LoginForm({ onSubmit, submitButton }) {
       </FormGroup>
       <FormGroup>
         <label htmlFor="password">Password</label>
-        <Input id="password" type="password" />
+        <Input
+          id="password"
+          type="password"
+          onFocus={() => setIsFocus(true)}
+          onBlur={() => setIsFocus(false)}
+          onChange={(event) => {
+            if (event.target.value.length >= 6) {
+              setErrorValidate(false);
+            } else {
+              setErrorValidate(true);
+            }
+          }}
+        />
+        <p style={{ color: 'red', fontSize: 12 }}>{errorValidate && isFocus ? 'Password must be at least 6 characters' : null }</p>
       </FormGroup>
       <div>
         {React.cloneElement(
           submitButton,
-          { type: 'submit' },
+          { type: 'submit', disabled: errorValidate === true, variant: errorValidate === true ? 'secondary' : 'primary' },
           ...(Array.isArray(submitButton.props.children)
             ? submitButton.props.children
             : [submitButton.props.children]),
@@ -64,51 +85,62 @@ function LoginForm({ onSubmit, submitButton }) {
 }
 
 function UnauthenticatedApp() {
-  const { login, register } = useAuth();
+  const dispatch = useDispatch();
+  const handleLogin = (form) => dispatch(login(form));
+  const handleRegister = (form) => dispatch(register(form));
   return (
-    <div
-      css={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        width: '100%',
-        height: '100vh',
-      }}
-    >
-      <Logo width="80" height="80" />
-      <h1>Bookshelf</h1>
-      <div
-        css={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
-          gridGap: '0.75rem',
-        }}
-      >
-        <Modal>
-          <ModalOpenButton>
-            <Button variant="primary">Login</Button>
-          </ModalOpenButton>
-          <ModalContents aria-label="Login form" title="Login">
-            <LoginForm
-              onSubmit={login}
-              submitButton={<Button variant="primary">Login</Button>}
-            />
-          </ModalContents>
-        </Modal>
-        <Modal>
-          <ModalOpenButton>
-            <Button variant="secondary">Register</Button>
-          </ModalOpenButton>
-          <ModalContents aria-label="Registration form" title="Register">
-            <LoginForm
-              onSubmit={register}
-              submitButton={<Button variant="secondary">Register</Button>}
-            />
-          </ModalContents>
-        </Modal>
-      </div>
-    </div>
+    <Routes>
+      <Route
+        path="/authentication"
+        element={(
+          <div
+            css={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '100%',
+              height: '100vh',
+            }}
+          >
+            <Logo width="80" height="80" />
+            <h1>Bookshelf</h1>
+            <div
+              css={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+                gridGap: '0.75rem',
+              }}
+            >
+              <Modal>
+                <ModalOpenButton>
+                  <Button variant="primary">Login</Button>
+                </ModalOpenButton>
+                <ModalContents aria-label="Login form" title="Login">
+                  <LoginForm
+                    onSubmit={handleLogin}
+                    submitButton={<Button variant="primary">Login</Button>}
+                  />
+                </ModalContents>
+              </Modal>
+              <Modal>
+                <ModalOpenButton>
+                  <Button variant="primary">Register</Button>
+                </ModalOpenButton>
+                <ModalContents aria-label="Registration form" title="Register">
+                  <LoginForm
+                    onSubmit={handleRegister}
+                    submitButton={<Button variant="primary">Register</Button>}
+                  />
+                </ModalContents>
+              </Modal>
+            </div>
+          </div>
+)}
+      />
+      <Route path="*" element={<NotFoundScreen to="/authentication" linkMessage="Go back to authentication page" />} />
+    </Routes>
+
   );
 }
 

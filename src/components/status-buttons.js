@@ -10,14 +10,13 @@ import {
   FaTimesCircle,
 } from 'react-icons/fa';
 import Tooltip from '@reach/tooltip';
+import { useDispatch } from 'react-redux';
 import {
-  useListItem,
-  useUpdateListItem,
-  useRemoveListItem,
-  useCreateListItem,
-} from 'utils/list-items';
+  updateListItem, removeListItem, addListItem,
+} from 'reducers/listItemSlice';
+import { useListItem, useAsync } from 'utils/hooks';
 import * as colors from 'styles/colors';
-import { useAsync } from 'utils/hooks';
+
 import { CircleButton, Spinner } from './lib';
 
 function TooltipButton({
@@ -61,10 +60,10 @@ function TooltipButton({
 
 function StatusButtons({ book }) {
   const listItem = useListItem(book.id);
-
-  const { mutateAsync: update } = useUpdateListItem();
-  const { mutateAsync: handleRemoveClick } = useRemoveListItem();
-  const { mutateAsync: handleAddClick } = useCreateListItem();
+  const dispatch = useDispatch();
+  const handleMarkAsReadOrUnread = (updates) => dispatch(updateListItem(updates));
+  const handleRemoveClick = (id) => dispatch(removeListItem(id));
+  const handleAddClick = (bookId) => dispatch(addListItem(bookId));
 
   return (
     <React.Fragment>
@@ -73,14 +72,14 @@ function StatusButtons({ book }) {
           <TooltipButton
             label="Mark as unread"
             highlight={colors.yellow}
-            onClick={() => update({ id: listItem.id, finishDate: null })}
+            onClick={() => handleMarkAsReadOrUnread({ id: listItem.id, finishDate: null })}
             icon={<FaBook />}
           />
         ) : (
           <TooltipButton
             label="Mark as read"
             highlight={colors.green}
-            onClick={() => update({ id: listItem.id, finishDate: Date.now() })}
+            onClick={() => handleMarkAsReadOrUnread({ id: listItem.id, finishDate: Date.now() })}
             icon={<FaCheckCircle />}
           />
         )

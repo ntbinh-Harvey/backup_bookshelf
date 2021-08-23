@@ -4,8 +4,9 @@ import { jsx } from '@emotion/core';
 import * as React from 'react';
 import Tooltip from '@reach/tooltip';
 import { FaSearch, FaTimes } from 'react-icons/fa';
+import { useDispatch, useSelector } from 'react-redux';
+import { getBookListByQuery, selectBookState } from 'reducers/bookSlice';
 import * as colors from 'styles/colors';
-import { useBookSearch, useRefetchBookSearchQuery } from 'utils/books';
 import { BookRow } from 'components/book-row';
 import { BookListUL, Spinner, Input } from 'components/lib';
 import { Profiler } from 'components/profiler';
@@ -13,17 +14,18 @@ import { Profiler } from 'components/profiler';
 function DiscoverBooksScreen() {
   const [query, setQuery] = React.useState('');
   const [queried, setQueried] = React.useState();
-  const {
-    books, error, isLoading, isError, isSuccess,
-  } = useBookSearch(query);
-  const refetchBookSearchQuery = useRefetchBookSearchQuery();
-
-  React.useEffect(() => () => refetchBookSearchQuery(), [refetchBookSearchQuery]);
+  const dispatch = useDispatch();
+  React.useEffect(() => () => dispatch(getBookListByQuery('')), [dispatch]);
+  const { books, status, error } = useSelector(selectBookState);
+  const isLoading = status === 'pending';
+  const isError = status === 'rejected';
+  const isSuccess = status === 'resolved';
 
   function handleSearchClick(event) {
     event.preventDefault();
     setQueried(true);
     setQuery(event.target.elements.search.value);
+    dispatch(getBookListByQuery(event.target.elements.search.value));
   }
 
   return (

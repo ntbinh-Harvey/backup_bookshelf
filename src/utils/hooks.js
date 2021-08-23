@@ -1,4 +1,8 @@
 import * as React from 'react';
+import { useSelector } from 'react-redux';
+import { selectUser } from 'reducers/userSlice';
+import { selectListItemState } from 'reducers/listItemSlice';
+import { client } from 'utils/api-client';
 
 function useSafeDispatch(dispatch) {
   const mounted = React.useRef(false);
@@ -81,4 +85,17 @@ function useAsync(initialState) {
   };
 }
 
-export { useAsync };
+function useClient() {
+  const { user } = useSelector(selectUser);
+  const token = user?.token;
+  return React.useCallback(
+    (endpoint, config) => client(endpoint, { ...config, token }),
+    [token],
+  );
+}
+
+function useListItem(bookId) {
+  const { listItems } = useSelector(selectListItemState);
+  return listItems?.find((li) => li.bookId === bookId) ?? null;
+}
+export { useAsync, useClient, useListItem };
