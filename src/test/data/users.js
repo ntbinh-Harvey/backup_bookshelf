@@ -21,7 +21,7 @@ window.__bookshelf.purgeUsers = () => {
 
 function validateUserForm({ username, password }) {
   if (!username) {
-    const error = new Error('An username is required');
+    const error = new Error('A username is required');
     error.status = 400;
     throw error;
   }

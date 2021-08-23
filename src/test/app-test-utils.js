@@ -22,7 +22,7 @@ const waitForLoading = async () => waitForElementToBeRemoved(
     ...screen.queryAllByLabelText(/loading/i),
     ...screen.queryAllByText(/loading/i),
   ],
-  { timeout: 10000 },
+  { timeout: 4000 },
 );
 
 async function render(ui, { route = '/list', user, ...renderOptions } = {}) {

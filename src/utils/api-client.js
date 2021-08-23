@@ -24,7 +24,7 @@ async function client(
     if (response.status === 401) {
       await auth.logout();
       // refresh the page for them
-      window.location.assign(window.location);
+      window.location.assign('/authentication');
       // eslint-disable-next-line prefer-promise-reject-errors
       return Promise.reject({ message: 'Please re-authenticate.' });
     }

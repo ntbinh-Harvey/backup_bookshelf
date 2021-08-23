@@ -9,9 +9,11 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { useSelector, useDispatch } from 'react-redux';
 import { toast, ToastContainer } from 'react-toastify';
 import { selectUser, logout } from 'reducers/userSlice';
-import { getBookListByQuery, resetBook, selectCurrentBook } from 'reducers/bookSlice';
-import { getListItem, resetListItem } from 'reducers/listItemSlice';
-import { Button, ErrorMessage, FullPageErrorFallback } from './components/lib';
+import { getBookListByQuery, selectCurrentBook } from 'reducers/bookSlice';
+import { getListItem } from 'reducers/listItemSlice';
+import {
+  Button, ErrorMessage, FullPageErrorFallback, Link,
+} from './components/lib';
 import * as mq from './styles/media-queries';
 import * as colors from './styles/colors';
 import { ReadingListScreen } from './screens/reading-list';
@@ -50,8 +52,6 @@ function AuthenticatedApp() {
   const handleLogout = () => {
     navigate('/authentication');
     dispatch(logout());
-    dispatch(resetBook());
-    dispatch(resetListItem());
   };
   React.useEffect(() => {
     dispatch(getBookListByQuery(''));
@@ -172,7 +172,7 @@ function Nav() {
           <NavLink to="/finished">Finished Books</NavLink>
         </li>
         <li>
-          <NavLink to={`book/${id}`}>Book Detail</NavLink>
+          <NavLink to={`book${id === undefined ? '' : `/${id}`}`}>Book Detail</NavLink>
         </li>
       </ul>
     </nav>
@@ -185,8 +185,29 @@ function AppRoutes() {
       <Route path="/list" element={<ReadingListScreen />} />
       <Route path="/finished" element={<FinishedScreen />} />
       <Route path="/discover" element={<DiscoverBooksScreen />} />
+      <Route
+        path="/book"
+        element={(
+          <div css={{ marginTop: '1em', fontSize: '1.2em' }}>
+            <p>
+              Looks like you've to see details of a book first! Check them out in your
+              {' '}
+              <Link to="/list">reading list</Link>
+              {' '}
+              or
+              {' '}
+              <Link to="/finished">finish list</Link>
+              {' '}
+              or
+              {' '}
+              <Link to="/discover">discover more</Link>
+              .
+            </p>
+          </div>
+      )}
+      />
       <Route path="/book/:bookId" element={<BookScreen />} />
-      <Route path="*" element={<NotFoundScreen />} />
+      <Route path="*" element={<NotFoundScreen to="/discover" linkMessage="Go back to disocover page" />} />
     </Routes>
   );
 }

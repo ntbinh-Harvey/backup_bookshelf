@@ -2,13 +2,13 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import * as auth from 'auth-provider';
 
 const Status = {
-  idle: 'idle',
-  pending: 'pending',
-  resolved: 'resolved',
-  rejected: 'rejectedUnauthenticated',
+  IDLE: 'idle',
+  PENDING: 'pending',
+  RESOLVED: 'resolved',
+  REJECTED: 'rejectedUnauthenticated',
 };
 const initialState = {
-  status: Status.idle,
+  status: Status.IDLE,
   user: null,
   error: null,
 };
@@ -37,34 +37,34 @@ export const userSlice = createSlice({
       state.user = null;
     },
     resetError: (state) => {
-      state.status = Status.resolved;
+      state.status = Status.RESOLVED;
       state.error = null;
     },
   },
   extraReducers: (builder) => {
     builder
       .addCase(login.pending, (state) => {
-        state.status = Status.pending;
+        state.status = Status.PENDING;
         state.error = null;
       })
       .addCase(register.pending, (state) => {
-        state.status = Status.pending;
+        state.status = Status.PENDING;
         state.error = null;
       })
       .addCase(login.fulfilled, (state, action) => {
-        state.status = Status.resolved;
+        state.status = Status.RESOLVED;
         state.user = action.payload;
       })
       .addCase(register.fulfilled, (state, action) => {
-        state.status = Status.resolved;
+        state.status = Status.RESOLVED;
         state.user = action.payload;
       })
       .addCase(login.rejected, (state, action) => {
-        state.status = Status.rejected;
+        state.status = Status.REJECTED;
         state.error = action.error;
       })
       .addCase(register.rejected, (state, action) => {
-        state.status = Status.rejected;
+        state.status = Status.REJECTED;
         state.error = action.error;
       });
   },

@@ -3,7 +3,7 @@ import { jsx } from '@emotion/core';
 
 import { Link } from 'components/lib';
 
-function NotFoundScreen() {
+function NotFoundScreen({ to, linkMessage }) {
   return (
     <div
       css={{
@@ -16,7 +16,7 @@ function NotFoundScreen() {
       <div>
         Sorry... nothing here.
         {' '}
-        <Link to="/list">Go home</Link>
+        <Link to={to}>{linkMessage}</Link>
       </div>
     </div>
   );

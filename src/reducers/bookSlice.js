@@ -3,10 +3,10 @@ import { client } from 'utils/api-client';
 import bookPlaceholderSvg from 'assets/book-placeholder.svg';
 
 const Status = {
-  idle: 'idle',
-  pending: 'pending',
-  resolved: 'resolved',
-  rejected: 'rejected',
+  IDLE: 'idle',
+  PENDING: 'pending',
+  RESOLVED: 'resolved',
+  REJECTED: 'rejected',
 };
 
 const loadingBook = {
@@ -24,7 +24,7 @@ const loadingBooks = Array.from({ length: 10 }, (v, index) => ({
 }));
 
 const initialState = {
-  status: Status.idle,
+  status: Status.IDLE,
   book: loadingBook,
   books: loadingBooks,
   error: null,
@@ -44,40 +44,38 @@ export const bookSlice = createSlice({
   name: 'book',
   initialState,
   reducers: {
-    resetBook: (state) => {
-      state.books = initialState.books;
-      state.book = initialState.book;
-    },
   },
   extraReducers: (builder) => {
     builder
       .addCase(getBookListByQuery.pending, (state) => {
-        state.status = Status.pending;
+        state.status = Status.PENDING;
       })
       .addCase(getBook.pending, (state) => {
-        state.status = Status.pending;
+        state.status = Status.PENDING;
         state.book = loadingBook;
       })
       .addCase(getBookListByQuery.fulfilled, (state, action) => {
-        state.status = Status.resolved;
+        state.status = Status.RESOLVED;
         state.books = action.payload;
       })
       .addCase(getBook.fulfilled, (state, action) => {
-        state.status = Status.resolved;
+        state.status = Status.RESOLVED;
         state.book = action.payload;
       })
       .addCase(getBookListByQuery.rejected, (state, action) => {
-        state.status = Status.rejected;
+        state.status = Status.REJECTED;
         state.error = action.error;
       })
       .addCase(getBook.rejected, (state, action) => {
-        state.status = Status.rejected;
+        state.status = Status.REJECTED;
         state.error = action.error;
+      })
+      .addCase({ type: 'user/logout' }, (state) => {
+        state.books = initialState.books;
+        state.book = initialState.book;
       });
   },
 });
-
-export const { resetBook } = bookSlice.actions;
 
 export { getBookListByQuery, getBook };
 
